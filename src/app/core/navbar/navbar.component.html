@@ -1,0 +1,68 @@
+<header class="navbar" [class.navbar--scrolled]="isScrolled" [class.navbar--menu-open]="isMenuOpen">
+  <div class="navbar__container">
+    <a routerLink="/" class="navbar__brand" (click)="closeMenu()">
+      <span class="navbar__brand-mark">
+        <img src="assets/img/profile-photo.png" alt="Logo de mnk ink" />
+      </span>
+
+      <div class="navbar__brand-copy">
+        <strong>mnk.Tat</strong>
+        <small>tattoo experience</small>
+      </div>
+    </a>
+
+    <nav class="navbar__links navbar__links--desktop">
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.path"
+        routerLinkActive="navbar__link--active"
+        [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+        class="navbar__link"
+      >
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <div class="navbar__actions navbar__actions--desktop">
+      <a routerLink="/turnos" class="navbar__cta">
+        <span class="navbar__cta-glow"></span>
+        <span class="navbar__cta-label">Reservar</span>
+      </a>
+    </div>
+
+    <button
+      type="button"
+      class="navbar__toggle"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="isMenuOpen"
+      aria-label="Abrir menú"
+    >
+      <span [class.is-open]="isMenuOpen"></span>
+      <span [class.is-open]="isMenuOpen"></span>
+      <span [class.is-open]="isMenuOpen"></span>
+    </button>
+  </div>
+
+  <div class="navbar__mobile-shell" [class.navbar__mobile-shell--open]="isMenuOpen">
+    <div class="navbar__mobile-backdrop" (click)="closeMenu()"></div>
+
+    <div class="navbar__mobile">
+      <nav class="navbar__mobile-links">
+        <a
+          *ngFor="let item of navItems"
+          [routerLink]="item.path"
+          routerLinkActive="navbar__mobile-link--active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+          class="navbar__mobile-link"
+          (click)="closeMenu()"
+        >
+          <span>{{ item.label }}</span>
+        </a>
+
+        <a routerLink="/turnos" class="navbar__mobile-cta" (click)="closeMenu()">
+          Reservar turno
+        </a>
+      </nav>
+    </div>
+  </div>
+</header>

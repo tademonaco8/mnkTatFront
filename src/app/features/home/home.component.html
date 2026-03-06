@@ -1,0 +1,185 @@
+<section class="home-page">
+  <div class="bg-orb bg-orb--one"></div>
+  <div class="bg-orb bg-orb--two"></div>
+  <div class="grid-overlay"></div>
+
+  <section class="hero container">
+    <div class="hero-copy hero-fade-up">
+      <p class="eyebrow">MNK tattoo · TATTOO EXPERIENCE</p>
+
+      <h1>
+        Tatuajes con identidad.
+        <span>Reserva online y experiencia cuidada de punta a punta.</span>
+      </h1>
+
+      <p class="hero-text">
+        Un espacio donde el concepto, la estética y la técnica se cruzan.
+        Explorá trabajos, entendé el proceso y reservá tu turno desde una agenda integrada.
+      </p>
+
+      <div class="hero-actions hero-fade-up delay-1">
+        <a routerLink="/turnos" class="btn btn-primary">Reservar turno</a>
+        <a routerLink="/gallery" class="btn btn-secondary">Ver trabajos</a>
+      </div>
+
+      <div class="hero-microdata hero-fade-up delay-2">
+        <div class="micro-item">
+          <strong>Angular</strong>
+          <span>Frontend interactivo</span>
+        </div>
+        <div class="micro-item">
+          <strong>.NET</strong>
+          <span>API y lógica de negocio</span>
+        </div>
+        <div class="micro-item">
+          <strong>Google Calendar</strong>
+          <span>Agenda real integrada</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-panel">
+      <div class="floating-card booking-card">
+        <div class="floating-card__header">
+          <div>
+            <p class="floating-label">Sistema de turnos</p>
+            <h3>Disponibilidad en tiempo real</h3>
+          </div>
+          <span class="status-pill">Live</span>
+        </div>
+
+        <div class="booking-list">
+          <div class="booking-item" *ngFor="let item of bookingPreview">
+            <span class="booking-dot"></span>
+            <span>{{ item }}</span>
+          </div>
+        </div>
+
+        <div class="booking-footer">
+          <div>
+            <small>Validación de solapamientos</small>
+            <strong>Activa</strong>
+          </div>
+          <div>
+            <small>Creación automática</small>
+            <strong>Google Calendar</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="floating-card concept-card">
+        <p class="concept-card__tag">Custom workflow</p>
+        <h3>Idea → Diseño → Reserva → Sesión</h3>
+        <p>
+          No es solo una galería: es una experiencia completa con marca, sistema y proceso.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="highlights container">
+    <div class="section-heading">
+      <p class="section-kicker">Enfoque</p>
+      <h2>Una web que muestra estilo y también resuelve</h2>
+      <p>
+        La idea es que el sitio no solo se vea bien, sino que tenga una lógica real de uso.
+      </p>
+    </div>
+
+    <div class="highlight-grid">
+      <article class="highlight-card float-hover" *ngFor="let item of highlights" appRevealOnScroll>
+        <span class="highlight-badge">{{ item.badge }}</span>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.description }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="showcase container">
+    <div class="showcase-copy">
+      <p class="section-kicker">Estética</p>
+      <h2>Oscuridad, contraste y una presencia que no se diluye</h2>
+      <p>
+        La dirección visual del proyecto combina fondos profundos, acentos cálidos y superficies
+        translúcidas para que la marca se sienta contemporánea, intensa y clara.
+      </p>
+
+      <div class="showcase-tags">
+        <span>Black & Grey</span>
+        <span>Dark Art</span>
+        <span>Custom Design</span>
+        <span>Booking UX</span>
+      </div>
+    </div>
+
+    <div class="showcase-visual">
+      <div class="visual-frame visual-frame--large">
+        <div class="visual-glow"></div>
+        <div class="visual-content">
+          <p>Experiencia</p>
+          <strong>Marca + portfolio + sistema real</strong>
+        </div>
+      </div>
+      <div class="visual-frame visual-frame--small">
+        <div class="visual-content">
+          <p>Diseño</p>
+          <strong>Capas, brillo y profundidad</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="process container">
+    <div class="section-heading">
+      <p class="section-kicker">Proceso</p>
+      <h2>Cómo se transforma una idea en una pieza</h2>
+    </div>
+
+    <div class="process-grid">
+      <article class="process-card float-hover" *ngFor="let step of processSteps" appRevealOnScroll>
+        <span class="process-number">{{ step.step }}</span>
+        <h3>{{ step.title }}</h3>
+        <p>{{ step.description }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="works container">
+    <div class="section-heading">
+      <p class="section-kicker">Preview</p>
+      <h2>Trabajos destacados</h2>
+    </div>
+
+    <div class="works-grid">
+      <article class="work-card float-hover" *ngFor="let work of works" appRevealOnScroll>
+        <div
+          class="work-image"
+          [style.background-image]="'linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.72)), url(' + work.image + ')'"
+        ></div>
+
+        <div class="work-content">
+          <h3>{{ work.title }}</h3>
+          <p>{{ work.subtitle }}</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="works-action">
+      <a routerLink="/gallery" class="btn btn-secondary">Explorar galería completa</a>
+    </div>
+  </section>
+
+  <section class="cta container">
+    <div class="cta-card">
+      <div>
+        <p class="section-kicker">Reserva</p>
+        <h2>¿Tenés una idea?</h2>
+        <p>
+          Elegí fecha, revisá horarios disponibles y dejá tu turno confirmado desde la web.
+        </p>
+      </div>
+
+      <a routerLink="/turnos" class="btn btn-primary">Ir a la agenda</a>
+    </div>
+  </section>
+</section>

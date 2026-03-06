@@ -1,0 +1,191 @@
+<section class="booking-page">
+  <div class="booking-hero">
+    <p class="booking-eyebrow">MNK Tattoo Booking</p>
+    <h1>Reservá tu turno de forma simple</h1>
+    <p class="booking-description">
+      Elegí una fecha, revisá los horarios disponibles en tiempo real y confirmá tu reserva.
+      El turno se agenda automáticamente en Google Calendar.
+    </p>
+  </div>
+
+  <div class="booking-layout">
+    <article class="booking-card">
+      <div class="card-header">
+        <h2>1. Elegí tu fecha</h2>
+        <p>Consultamos disponibilidad real del estudio.</p>
+      </div>
+
+      <div class="field-block">
+        <label for="booking-date">Fecha</label>
+        <input
+          id="booking-date"
+          type="date"
+          [(ngModel)]="selectedDate"
+          (change)="onDateChange()"
+          [min]="minDate"
+        />
+      </div>
+
+      <div class="card-header slots-header">
+        <h2>2. Seleccioná un horario</h2>
+        <p>Los horarios ocupados se muestran bloqueados.</p>
+      </div>
+
+      <div class="field-block">
+        <label for="booking-duration">Duración</label>
+        <select
+          id="booking-duration"
+          [(ngModel)]="turno.duracionMinutos"
+          (change)="onDurationChange()"
+        >
+          <option *ngFor="let option of durationOptions" [ngValue]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+
+      <div *ngIf="isLoadingAvailability" class="state-box">
+        Consultando disponibilidad...
+      </div>
+
+      <div *ngIf="!isLoadingAvailability && availableSlots.length === 0" class="state-box state-muted">
+        No hay horarios configurados para esta combinación.
+      </div>
+
+      <div *ngIf="!isLoadingAvailability && availableSlots.length > 0" class="slots-grid">
+        <button
+          *ngFor="let slot of availableSlots"
+          type="button"
+          class="slot-btn"
+          [class.slot-btn--selected]="selectedSlot?.startLocal === slot.startLocal"
+          [class.slot-btn--disabled]="!slot.available"
+          [disabled]="!slot.available"
+          (click)="selectSlot(slot)"
+        >
+          <span>{{ slot.label }}</span>
+          <small>{{ slot.available ? 'Disponible' : 'Ocupado' }}</small>
+        </button>
+      </div>
+    </article>
+
+    <article class="booking-card">
+      <div class="card-header">
+        <h2>3. Completá tus datos</h2>
+        <p>Dejá la información básica para confirmar la reserva.</p>
+      </div>
+
+      <form class="booking-form" (ngSubmit)="enviarTurno()">
+        <div class="field-block">
+          <label for="nombre">Nombre completo</label>
+          <input
+            id="nombre"
+            type="text"
+            name="nombre"
+            [(ngModel)]="turno.nombre"
+            placeholder="Tu nombre"
+            required
+          />
+        </div>
+
+        <div class="field-block">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            [(ngModel)]="turno.email"
+            placeholder="tuemail@ejemplo.com"
+            required
+          />
+        </div>
+
+        <div class="field-block">
+          <label for="telefono">Teléfono</label>
+          <input
+            id="telefono"
+            type="text"
+            name="telefono"
+            [(ngModel)]="turno.telefono"
+            placeholder="Opcional"
+          />
+        </div>
+
+        <div class="field-block">
+          <label for="descripcion">Idea / descripción</label>
+          <textarea
+            id="descripcion"
+            name="descripcion"
+            rows="4"
+            [(ngModel)]="turno.descripcion"
+            placeholder="Contame un poco la idea del tatuaje"
+          ></textarea>
+        </div>
+
+        <div class="summary-box">
+          <h3>Resumen de la reserva</h3>
+
+          <div class="summary-row">
+            <span>Fecha</span>
+            <strong>{{ selectedSlot ? formatDisplayDateTime(selectedSlot.startLocal) : 'Sin seleccionar' }}</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Duración</span>
+            <strong>{{ turno.duracionMinutos / 60 }} h</strong>
+          </div>
+
+          <div class="summary-row">
+            <span>Estado</span>
+            <strong>{{ selectedSlot ? 'Listo para confirmar' : 'Elegí un horario' }}</strong>
+          </div>
+        </div>
+
+        <button class="submit-btn" type="submit" [disabled]="!canSubmit">
+          {{ isSubmitting ? 'Confirmando turno...' : 'Confirmar reserva' }}
+        </button>
+      </form>
+    </article>
+  </div>
+
+  <article *ngIf="successBooking" class="success-card">
+    <p class="success-pill">Turno confirmado</p>
+    <h2>Tu reserva quedó agendada</h2>
+
+    <div class="success-grid">
+      <div>
+        <span>Cliente</span>
+        <strong>{{ successBooking.clientName }}</strong>
+      </div>
+      <div>
+        <span>Email</span>
+        <strong>{{ successBooking.clientEmail }}</strong>
+      </div>
+      <div>
+        <span>Fecha y hora</span>
+        <strong>{{ formatDisplayDateTime(successBooking.startLocal) }}</strong>
+      </div>
+      <div>
+        <span>Duración</span>
+        <strong>{{ successBooking.durationMinutes / 60 }} h</strong>
+      </div>
+    </div>
+
+    <a
+      *ngIf="successBooking.htmlLink"
+      class="success-link"
+      [href]="successBooking.htmlLink"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Ver evento en Google Calendar
+    </a>
+  </article>
+
+  <div
+    *ngIf="showToast"
+    class="toast"
+    [class.toast--error]="isErrorToast"
+  >
+    {{ toastMessage }}
+  </div>
+</section>

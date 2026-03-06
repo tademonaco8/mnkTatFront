@@ -1,0 +1,67 @@
+/* You can add global styles to this file, and also import other style files */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(22px) scale(0.985);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+  will-change: opacity, transform;
+}
+
+.reveal--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.float-hover {
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.float-hover:hover {
+  transform: translateY(-6px);
+}
+
+.soft-pulse {
+  animation: softPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes softPulse {
+  0%, 100% {
+    transform: translateY(0);
+    box-shadow: 0 16px 34px rgba(182, 49, 49, 0.24);
+  }
+  50% {
+    transform: translateY(-2px);
+    box-shadow: 0 22px 42px rgba(182, 49, 49, 0.34);
+  }
+}
+
+.hero-fade-up {
+  opacity: 0;
+  transform: translateY(28px);
+  animation: heroFadeUp 0.8s ease forwards;
+}
+
+.hero-fade-up.delay-1 { animation-delay: 0.12s; }
+.hero-fade-up.delay-2 { animation-delay: 0.24s; }
+.hero-fade-up.delay-3 { animation-delay: 0.36s; }
+
+@keyframes heroFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

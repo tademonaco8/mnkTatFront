@@ -1,0 +1,134 @@
+<section class="about-page">
+  <div class="about-orb about-orb--one"></div>
+  <div class="about-orb about-orb--two"></div>
+  <div class="about-grid-overlay"></div>
+
+  <section class="about-hero container">
+    <div class="about-hero__copy">
+      <p class="section-kicker">Sobre mí</p>
+
+      <h1>
+        Diseño piezas con identidad,
+        <span>buscando que cada tatuaje tenga presencia, sentido y una experiencia cuidada alrededor.</span>
+      </h1>
+
+      <p class="about-hero__text">
+        Me interesa trabajar ideas que no se queden solo en lo decorativo.
+        Busco piezas con clima, contraste y una lectura visual fuerte, adaptadas al cuerpo y pensadas desde el concepto.
+      </p>
+
+      <p class="about-hero__text">
+        Este proyecto también nace de esa misma lógica: no quería solo mostrar trabajos,
+        sino construir una web que combine marca, portfolio y una agenda real para reservar turnos de manera simple.
+      </p>
+
+      <div class="about-actions">
+        <a routerLink="/turnos" class="btn btn-primary">Reservar turno</a>
+        <a routerLink="/gallery" class="btn btn-secondary">Ver trabajos</a>
+      </div>
+    </div>
+
+    <div class="about-hero__panel">
+      <article class="profile-card">
+        <div class="profile-card__image">
+          <div class="profile-card__glow"></div>
+          <div class="profile-card__placeholder">
+            <img src="assets/img/logo-about.png" alt="Foto de perfil de mnk ink" />
+          </div>
+        </div>
+
+        <div class="profile-card__content">
+          <p class="profile-card__tag">Perfil</p>
+          <h2>mnk Tattoo</h2>
+          <p>
+            Un proyecto donde conviven lo artístico y lo técnico:
+            diseño personalizado, portfolio visual y sistema de turnos integrado.
+          </p>
+        </div>
+      </article>
+
+      <article class="stats-card">
+        <p class="profile-card__tag">En una mirada</p>
+
+        <div class="stats-grid">
+          <div class="stat-item" *ngFor="let stat of stats">
+            <strong>{{ stat.value }}</strong>
+            <span>{{ stat.label }}</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="about-values container">
+    <div class="section-heading">
+      <p class="section-kicker">Enfoque</p>
+      <h2>No se trata solo de tatuar, sino de cómo se construye la pieza</h2>
+      <p>
+        La intención, el contraste, la adaptación al cuerpo y la experiencia del proceso forman parte del resultado final.
+      </p>
+    </div>
+
+    <div class="values-grid">
+      <article class="value-card" *ngFor="let item of values">
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.description }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="about-story container">
+    <div class="story-card">
+      <div class="story-card__copy">
+        <p class="section-kicker">Visión</p>
+        <h2>Me interesa lo que deja marca visual y también lo que deja una sensación</h2>
+        <p>
+          Trabajo desde una búsqueda ligada al realismo oscuro, al black & grey, a las texturas y a las piezas
+          que cargan una atmósfera particular. Me interesa lo intenso, lo que parece salir de adentro antes que del adorno.
+        </p>
+        <p>
+          También me importa el proceso: escuchar la idea, ordenar lo que todavía está difuso
+          y convertirlo en una pieza que tenga forma, peso y lugar propio.
+        </p>
+      </div>
+
+      <div class="story-card__quote">
+        <div class="quote-box">
+          <p>
+            “La pieza no termina en el diseño:
+            también importa cómo se piensa, cómo se agenda y cómo se vive la experiencia.”
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-timeline container">
+    <div class="section-heading">
+      <p class="section-kicker">Proceso</p>
+      <h2>De la idea a la sesión</h2>
+    </div>
+
+    <div class="timeline-grid">
+      <article class="timeline-card" *ngFor="let item of timeline">
+        <span class="timeline-card__step">{{ item.step }}</span>
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.description }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="about-cta container">
+    <article class="cta-card">
+      <div>
+        <p class="section-kicker">Turnos</p>
+        <h2>¿Ya tenés una idea o querés empezar a darle forma?</h2>
+        <p>
+          Podés revisar disponibilidad, elegir horario y dejar tu turno reservado desde la agenda online.
+        </p>
+      </div>
+
+      <a routerLink="/turnos" class="btn btn-primary">Ir a la agenda</a>
+    </article>
+  </section>
+</section>

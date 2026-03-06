@@ -1,0 +1,106 @@
+<section class="gallery-page">
+  <div class="gallery-orb gallery-orb--one"></div>
+  <div class="gallery-orb gallery-orb--two"></div>
+
+  <section class="gallery-hero container">
+    <p class="section-kicker">Portfolio visual</p>
+    <h1>Tatuajes con presencia, contraste y concepto</h1>
+    <p class="gallery-description">
+      Una selección pensada para mostrar estilo, proceso y criterio visual.
+      Cada pieza busca sostener una identidad clara, tanto de cerca como a distancia.
+    </p>
+  </section>
+
+  <section class="gallery-toolbar container">
+    <div class="filter-group">
+      <button
+        *ngFor="let filter of filters"
+        type="button"
+        class="filter-chip"
+        [class.filter-chip--active]="activeFilter === filter.value"
+        (click)="setFilter(filter.value)"
+      >
+        {{ filter.label }}
+      </button>
+    </div>
+
+    <div class="gallery-stats">
+      <span>{{ filteredWorks.length }} piezas visibles</span>
+    </div>
+  </section>
+
+  <section class="gallery-grid container">
+    <article
+      *ngFor="let work of filteredWorks; trackBy: trackByWork"
+      class="gallery-card"
+      [class.gallery-card--featured]="work.featured"
+      (click)="openWork(work)"
+    >
+      <div
+        class="gallery-card__image"
+        [style.background-image]="'linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.78)), url(' + work.image + ')'"
+      ></div>
+
+      <div class="gallery-card__content">
+        <div class="gallery-card__topline">
+          <span class="gallery-card__category">{{ work.category.join(' · ') }}</span>
+          <span *ngIf="work.featured" class="gallery-card__featured">Featured</span>
+        </div>
+
+        <h2>{{ work.title }}</h2>
+        <p class="gallery-card__subtitle">{{ work.subtitle }}</p>
+        <p class="gallery-card__description">{{ work.description }}</p>
+
+        <div class="gallery-card__tags">
+          <span *ngFor="let tag of work.tags">{{ tag }}</span>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="gallery-note container">
+    <div class="gallery-note__card">
+      <p class="section-kicker">Curaduría</p>
+      <h2>No es solo una grilla de imágenes</h2>
+      <p>
+        La galería acompaña la marca y muestra variedad de estilos, pero también orden,
+        intención visual y una experiencia más cuidada para portfolio.
+      </p>
+    </div>
+  </section>
+
+  <div
+    *ngIf="selectedWork"
+    class="gallery-modal-backdrop"
+    (click)="closeModal()"
+  >
+    <div
+      class="gallery-modal"
+      (click)="$event.stopPropagation()"
+    >
+      <button
+        type="button"
+        class="gallery-modal__close"
+        (click)="closeModal()"
+        aria-label="Cerrar"
+      >
+        ×
+      </button>
+
+      <div class="gallery-modal__media">
+        <img [src]="selectedWork.image" [alt]="selectedWork.title" />
+      </div>
+
+      <div class="gallery-modal__content">
+        <p class="section-kicker">Detalle</p>
+        <h2>{{ selectedWork.title }}</h2>
+        <p class="gallery-modal__subtitle">{{ selectedWork.subtitle }}</p>
+        <p class="gallery-modal__description">{{ selectedWork.description }}</p>
+
+        <div class="gallery-modal__tags">
+          <span *ngFor="let tag of selectedWork.tags">{{ tag }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

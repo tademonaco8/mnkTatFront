@@ -1,0 +1,109 @@
+<footer class="footer">
+  <div class="footer__glow footer__glow--one"></div>
+  <div class="footer__glow footer__glow--two"></div>
+
+  <div class="footer__container">
+    <section class="footer__hero">
+      <div class="footer__brand">
+        <div class="footer__brand-mark">
+          <img src="assets/img/profile-photo.png" alt="Logo de mnk ink" />
+        </div>
+
+        <div class="footer__brand-copy">
+          <p class="footer__eyebrow">mnk Tattoo</p>
+          <h2>Tatuajes con identidad y una experiencia de reserva más cuidada.</h2>
+          <p>
+            Una web donde conviven portfolio visual, proceso creativo y un sistema
+            de turnos conectado a Google Calendar.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer__hero-actions">
+        <a routerLink="/turnos" class="footer__cta footer__cta--primary">
+          Reservar turno
+        </a>
+
+        <a routerLink="/gallery" class="footer__cta footer__cta--secondary">
+          Ver trabajos
+        </a>
+      </div>
+    </section>
+
+    <section class="footer__cards">
+      <article class="footer__info-card" *ngFor="let card of contactCards">
+        <span>{{ card.title }}</span>
+        <strong>{{ card.value }}</strong>
+        <small>{{ card.caption }}</small>
+      </article>
+    </section>
+
+    <section class="footer__content">
+      <div class="footer__column">
+        <h3>Navegación</h3>
+
+        <a
+          *ngFor="let item of navLinks"
+          [routerLink]="item.path"
+          class="footer__link"
+        >
+          {{ item.label }}
+        </a>
+      </div>
+
+      <div class="footer__column">
+        <h3>Contacto</h3>
+
+        <a class="footer__link" href="mailto:tade.monaco8&#64;gmail.com">
+          tademonaco8&#64;gmail.com
+        </a>
+
+        <a
+          class="footer__link"
+          href="https://wa.me/542494209376"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          WhatsApp
+        </a>
+
+        <span class="footer__text">Consultas y reservas con coordinación previa</span>
+      </div>
+
+      <div class="footer__column">
+        <h3>Redes</h3>
+
+        <a
+          *ngFor="let item of socialLinks"
+          class="footer__link"
+          [href]="item.href"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ item.label }}
+        </a>
+      </div>
+
+      <div class="footer__column footer__column--highlight">
+        <h3>Proyecto</h3>
+
+        <p class="footer__project-text">
+          Frontend en Angular, backend en .NET y creación automática de eventos
+          en Google Calendar para mostrar una experiencia real de booking.
+        </p>
+
+        <div class="footer__stack">
+          <span>Angular</span>
+          <span>.NET</span>
+          <span>REST API</span>
+          <span>Google Calendar</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="footer__bottom">
+      <span>© {{ year }} mnk Tattoo</span>
+      <span>Portfolio + booking experience</span>
+    </section>
+  </div>
+</footer>
