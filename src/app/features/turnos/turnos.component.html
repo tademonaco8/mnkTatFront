@@ -170,15 +170,13 @@
       </div>
     </div>
 
-    <a
-      *ngIf="successBooking.htmlLink"
-      class="success-link"
-      [href]="successBooking.htmlLink"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      Ver evento en Google Calendar
-    </a>
+    <div class="success-message">
+      <strong>Solicitud recibida.</strong>
+      <p>
+        El turno quedó registrado. Te vamos a contactar para terminar de confirmar
+        los detalles del diseño, ubicación y presupuesto final.
+      </p>
+    </div>
   </article>
 
   <div

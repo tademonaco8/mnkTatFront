@@ -20,7 +20,6 @@ interface BookingConfirmation {
   startLocal: string;
   durationMinutes: number;
   notes?: string | null;
-  htmlLink?: string;
 }
 
 @Component({
@@ -180,8 +179,7 @@ export class TurnosComponent implements OnInit {
           clientEmail: payload.clientEmail,
           startLocal: payload.startLocal,
           durationMinutes: payload.durationMinutes,
-          notes: payload.notes,
-          htmlLink: res.htmlLink
+          notes: payload.notes
         };
 
         this.turno = {
@@ -194,7 +192,7 @@ export class TurnosComponent implements OnInit {
 
         this.selectedSlot = null;
         this.loadAvailability();
-        this.mostrarToast('Turno confirmado correctamente.');
+        this.mostrarToast('Solicitud registrada correctamente.');
       },
       error: (err) => {
         this.isSubmitting = false;
