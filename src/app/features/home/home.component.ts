@@ -79,7 +79,7 @@ export class HomeComponent {
     {
       title: 'Lettering',
       subtitle: 'Línea suave y orgánica.',
-      image: 'assets/img/work-2.jpg'
+      image: 'assets/img/work-1.jpg'
     },
     {
       title: 'Minimal',

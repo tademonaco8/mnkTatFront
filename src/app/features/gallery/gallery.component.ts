@@ -1,7 +1,7 @@
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 
-type WorkCategory = 'all' | 'black-grey' | 'minimal' | 'lettering';
+type WorkCategory = 'all' | 'black-grey' | 'minimal' | 'lettering' | 'neotribal' | 'dark';
 
 interface GalleryItem {
   id: number;
@@ -39,6 +39,16 @@ export class GalleryComponent {
 
   works: GalleryItem[] = [
     {
+      id: 9,
+      title: 'Ojo dark ornamental',
+      category: ['dark'],
+      subtitle: 'Ojo ornamental',
+      description: 'Diseño de ojo central con detalles filosos, sombreado oscuro y estética dark art.',
+      image: 'assets/img/work-9.jpg',
+      featured: true,
+      tags: ['Dark', 'Lineal', 'Diseño personalizado']
+    },
+    {
       id: 1,
       title: 'Fechas en números romanos y lettering',
       category: ['lettering', 'minimal'],
@@ -59,14 +69,24 @@ export class GalleryComponent {
       tags: ['Black & Grey', 'Fine Line', 'Diseño propio']
     },
     {
+      id: 8,
+      title: 'Rostro abstracto',
+      category: ['black-grey', 'minimal'],
+      subtitle: 'Rostro fragmentado',
+      description: 'Pieza black & grey con rostro abstracto, sombreado suave y una composición surreal.',
+      image: 'assets/img/work-8.jpg',
+      featured: true,
+      tags: ['Black & Grey', 'Diseño personalizado', 'Sombreado suave']
+    },
+    {
       id: 3,
-      title: 'Lettering “Todo Pasa”',
-      category: ['lettering'],
-      subtitle: 'Fluidez, trazo fino y valor emocional',
-      description: 'Lettering de estilo cursivo trabajado con una línea suave y orgánica. Una pieza simple pero expresiva, donde el peso está puesto en el gesto de la escritura y su carga emocional.',
+      title: 'Neo tribal linework',
+      category: ['neotribal'],
+      subtitle: 'Fluidez y trazo fino',
+      description: 'Diseño ornamental de líneas fluidas, inspirado en formas tribales y composición simétrica.',
       image: 'assets/img/work-2.jpg',
       featured: true,
-      tags: ['Black & Grey', 'Lettering', 'Minimal']
+      tags: ['Black & Grey', 'Neo Tribal', 'Linework']
     },
     {
       id: 4,
