@@ -1,18 +1,20 @@
 <section class="booking-page">
   <div class="booking-hero">
     <p class="booking-eyebrow">MNK Tattoo Booking</p>
-    <h1>Reservá tu turno de forma simple</h1>
+    <h1>Solicitá tu turno de forma simple</h1>
     <p class="booking-description">
-      Elegí una fecha, revisá los horarios disponibles en tiempo real y confirmá tu reserva.
-      El turno se agenda automáticamente en Google Calendar.
+      Elegí una fecha disponible, contame tu idea y dejá tu solicitud.
+      Después coordinamos los detalles del diseño y la seña.
     </p>
   </div>
 
   <div class="booking-layout">
     <article class="booking-card">
       <div class="card-header">
-        <h2>1. Elegí tu fecha</h2>
-        <p>Consultamos disponibilidad real del estudio.</p>
+        <h2>1. Elegí fecha y duración</h2>
+        <p>
+          No todos los días tienen horarios habilitados. La disponibilidad depende de la agenda.
+        </p>
       </div>
 
       <div class="field-block">
@@ -20,21 +22,18 @@
         <input
           id="booking-date"
           type="date"
+          name="booking-date"
           [(ngModel)]="selectedDate"
           (change)="onDateChange()"
           [min]="minDate"
         />
       </div>
 
-      <div class="card-header slots-header">
-        <h2>2. Seleccioná un horario</h2>
-        <p>Los horarios ocupados se muestran bloqueados.</p>
-      </div>
-
       <div class="field-block">
-        <label for="booking-duration">Duración</label>
+        <label for="booking-duration">Duración estimada</label>
         <select
           id="booking-duration"
+          name="booking-duration"
           [(ngModel)]="turno.duracionMinutos"
           (change)="onDurationChange()"
         >
@@ -44,15 +43,28 @@
         </select>
       </div>
 
+      <div class="card-header slots-header">
+        <h2>2. Seleccioná un horario</h2>
+        <p>
+          Los horarios ocupados aparecen bloqueados. Si no ves opciones, ese día no está habilitado.
+        </p>
+      </div>
+
       <div *ngIf="isLoadingAvailability" class="state-box">
         Consultando disponibilidad...
       </div>
 
-      <div *ngIf="!isLoadingAvailability && availableSlots.length === 0" class="state-box state-muted">
-        No hay horarios configurados para esta combinación.
+      <div
+        *ngIf="!isLoadingAvailability && availableSlots.length === 0"
+        class="state-box state-muted"
+      >
+        No hay horarios habilitados para esta fecha.
       </div>
 
-      <div *ngIf="!isLoadingAvailability && availableSlots.length > 0" class="slots-grid">
+      <div
+        *ngIf="!isLoadingAvailability && availableSlots.length > 0"
+        class="slots-grid"
+      >
         <button
           *ngFor="let slot of availableSlots"
           type="button"
@@ -71,7 +83,9 @@
     <article class="booking-card">
       <div class="card-header">
         <h2>3. Completá tus datos</h2>
-        <p>Dejá la información básica para confirmar la reserva.</p>
+        <p>
+          Dejá la información básica para registrar la reserva y poder coordinar los detalles.
+        </p>
       </div>
 
       <form class="booking-form" (ngSubmit)="enviarTurno()">
@@ -125,8 +139,10 @@
           <h3>Resumen de la reserva</h3>
 
           <div class="summary-row">
-            <span>Fecha</span>
-            <strong>{{ selectedSlot ? formatDisplayDateTime(selectedSlot.startLocal) : 'Sin seleccionar' }}</strong>
+            <span>Fecha y horario</span>
+            <strong>
+              {{ selectedSlot ? formatDisplayDateTime(selectedSlot.startLocal) : 'Sin seleccionar' }}
+            </strong>
           </div>
 
           <div class="summary-row">
@@ -136,34 +152,39 @@
 
           <div class="summary-row">
             <span>Estado</span>
-            <strong>{{ selectedSlot ? 'Listo para confirmar' : 'Elegí un horario' }}</strong>
+            <strong>
+              {{ selectedSlot ? 'Listo para solicitar' : 'Elegí un horario' }}
+            </strong>
           </div>
         </div>
 
         <button class="submit-btn" type="submit" [disabled]="!canSubmit">
-          {{ isSubmitting ? 'Confirmando turno...' : 'Confirmar reserva' }}
+          {{ isSubmitting ? 'Enviando solicitud...' : 'Enviar solicitud' }}
         </button>
       </form>
     </article>
   </div>
 
   <article *ngIf="successBooking" class="success-card">
-    <p class="success-pill">Turno confirmado</p>
-    <h2>Tu reserva quedó agendada</h2>
+    <p class="success-pill">Solicitud enviada</p>
+    <h2>Tu solicitud quedó registrada</h2>
 
     <div class="success-grid">
       <div>
         <span>Cliente</span>
         <strong>{{ successBooking.clientName }}</strong>
       </div>
+
       <div>
         <span>Email</span>
         <strong>{{ successBooking.clientEmail }}</strong>
       </div>
+
       <div>
         <span>Fecha y hora</span>
         <strong>{{ formatDisplayDateTime(successBooking.startLocal) }}</strong>
       </div>
+
       <div>
         <span>Duración</span>
         <strong>{{ successBooking.durationMinutes / 60 }} h</strong>
@@ -173,8 +194,8 @@
     <div class="success-message">
       <strong>Solicitud recibida.</strong>
       <p>
-        El turno quedó registrado. Te vamos a contactar para terminar de confirmar
-        los detalles del diseño, ubicación y presupuesto final.
+        Tu solicitud quedó registrada. Te voy a contactar para confirmar diseño,
+        zona, presupuesto, seña y detalles finales del turno.
       </p>
     </div>
   </article>

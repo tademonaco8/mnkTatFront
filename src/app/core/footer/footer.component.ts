@@ -39,8 +39,8 @@ export class FooterComponent {
     },
     {
       title: 'Agenda',
-      value: 'Turnos online',
-      caption: 'Disponibilidad integrada'
+      value: 'Reserva previa',
+      caption: 'Horarios habilitados por semana'
     },
     {
       title: 'Estilo',

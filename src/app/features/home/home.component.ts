@@ -32,8 +32,8 @@ export class HomeComponent {
   highlights: HighlightItem[] = [
     {
       title: 'Reserva online',
-      description: 'Disponibilidad real, validación de conflictos y creación automática en Google Calendar.',
-      badge: 'Booking'
+      description: 'Elegí uno de los horarios habilitados, dejá tus datos y coordinamos los detalles del diseño.',
+      badge: 'Turnos'
     },
     {
       title: 'Diseño personalizado',
@@ -89,8 +89,8 @@ export class HomeComponent {
   ];
 
   bookingPreview = [
-    'Miércoles · 14:00',
-    'Jueves · 16:00',
+    'Martes · 18:30',
+    'Jueves · 20:00',
     'Sábado · 12:00'
   ];
 }

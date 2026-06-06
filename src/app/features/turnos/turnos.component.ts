@@ -60,9 +60,19 @@ export class TurnosComponent implements OnInit {
     { label: '3 horas', value: 180 }
   ];
 
-  readonly businessHourStart = 10;
-  readonly businessHourEnd = 20;
-  readonly slotStepMinutes = 60;
+  readonly allowedSlotsByDay: { [key: number]: string[] } = {
+    // 0 = domingo
+    // 1 = lunes
+    // 2 = martes
+    // 3 = miércoles
+    // 4 = jueves
+    // 5 = viernes
+    // 6 = sábado
+
+    2: ['18:30', '20:00'],          // martes
+    4: ['18:30', '20:00'],          // jueves
+    6: ['10:00', '12:30', '15:00']  // sábado
+  };
 
   constructor(private turnosService: TurnosService) {}
 
@@ -108,38 +118,41 @@ export class TurnosComponent implements OnInit {
   }
 
   generateSlots(): void {
-    if (!this.selectedDate) {
-      this.availableSlots = [];
-      return;
-    }
-
-    const slots: AvailableSlot[] = [];
-    const durationMs = this.turno.duracionMinutos * 60 * 1000;
-
-    for (let hour = this.businessHourStart; hour < this.businessHourEnd; hour++) {
-      const startDate = this.buildDate(this.selectedDate, hour, 0);
-      const endDate = new Date(startDate.getTime() + durationMs);
-
-      if (
-        endDate.getDate() !== startDate.getDate() ||
-        endDate.getHours() > this.businessHourEnd ||
-        (endDate.getHours() === this.businessHourEnd && endDate.getMinutes() > 0)
-      ) {
-        continue;
-      }
-
-      const available = !this.busySlots.some((busy) => this.overlapsWithBusySlot(startDate, endDate, busy));
-
-      slots.push({
-        label: `${this.formatHour(startDate)} - ${this.formatHour(endDate)}`,
-        startLocal: this.toLocalDateTimeString(startDate),
-        endLocal: this.toLocalDateTimeString(endDate),
-        available
-      });
-    }
-
-    this.availableSlots = slots;
+  if (!this.selectedDate) {
+    this.availableSlots = [];
+    return;
   }
+
+  const allowedSlots = this.getAllowedSlotsForSelectedDate();
+
+  if (allowedSlots.length === 0) {
+    this.availableSlots = [];
+    return;
+  }
+
+  const slots: AvailableSlot[] = [];
+  const durationMs = this.turno.duracionMinutos * 60 * 1000;
+
+  allowedSlots.forEach((slotTime) => {
+    const [hours, minutes] = slotTime.split(':').map(Number);
+
+    const startDate = this.buildDate(this.selectedDate, hours, minutes);
+    const endDate = new Date(startDate.getTime() + durationMs);
+
+    const available = !this.busySlots.some((busy) =>
+      this.overlapsWithBusySlot(startDate, endDate, busy)
+    );
+
+    slots.push({
+      label: `${this.formatHour(startDate)} - ${this.formatHour(endDate)}`,
+      startLocal: this.toLocalDateTimeString(startDate),
+      endLocal: this.toLocalDateTimeString(endDate),
+      available
+    });
+  });
+
+  this.availableSlots = slots;
+}
 
   selectSlot(slot: AvailableSlot): void {
     if (!slot.available) return;
@@ -227,6 +240,16 @@ export class TurnosComponent implements OnInit {
     const [year, month, day] = dateStr.split('-').map(Number);
     return new Date(year, month - 1, day, hours, minutes, 0, 0);
   }
+  
+  private getAllowedSlotsForSelectedDate(): string[] {
+  if (!this.selectedDate) return [];
+
+  const [year, month, day] = this.selectedDate.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  const dayOfWeek = date.getDay();
+
+  return this.allowedSlotsByDay[dayOfWeek] || [];
+}
 
   private toLocalDateTimeString(date: Date): string {
     const year = date.getFullYear();

@@ -17,7 +17,7 @@ export class NavbarComponent {
 
   navItems = [
     { label: 'Inicio', path: '/' },
-    { label: 'Tatuajes', path: '/gallery' },
+    { label: 'Trabajos', path: '/gallery' },
     { label: 'Sobre mí', path: '/about' },
     { label: 'Turnos', path: '/turnos' }
   ];
