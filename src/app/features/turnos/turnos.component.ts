@@ -68,10 +68,12 @@ export class TurnosComponent implements OnInit {
     // 4 = jueves
     // 5 = viernes
     // 6 = sábado
-
-    2: ['18:30', '20:00'],          // martes
+    1: ['19:30', '21:00'],          // lunes
+    2: ['18:30', '20:00'],
+    3: ['19:30', '21:00'],          // miércoles
     4: ['18:30', '20:00'],          // jueves
-    6: ['10:00', '12:30', '15:00']  // sábado
+    5: ['19:30', '21:00'],          // viernes
+    6: ['10:00', '12:30', '15:00', '18:30', '20:00']  // sábado
   };
 
   constructor(private turnosService: TurnosService) {}
