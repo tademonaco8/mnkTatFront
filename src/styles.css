@@ -1,8 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos globales */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import './reset.css';
 
 
 html {
@@ -63,5 +61,25 @@ html {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+/* Respeta a quienes tienen activado "reducir movimiento" en su sistema */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal,
+  .hero-fade-up {
+    opacity: 1;
+    transform: none;
   }
 }

@@ -13,8 +13,8 @@
       </h1>
 
       <p class="hero-text">
-        Un espacio donde el concepto, la estética y la técnica se cruzan.
-        Explorá trabajos, entendé el proceso y reservá tu turno desde una agenda integrada.
+        Un espacio donde el concepto, la estética y la técnica se cruzan. Explorá trabajos, entendé
+        el proceso y reservá tu turno desde una agenda integrada.
       </p>
 
       <div class="hero-actions hero-fade-up delay-1">
@@ -49,10 +49,12 @@
         </div>
 
         <div class="booking-list">
-          <div class="booking-item" *ngFor="let item of bookingPreview">
-            <span class="booking-dot"></span>
-            <span>{{ item }}</span>
-          </div>
+          @for (item of bookingPreview; track item) {
+            <div class="booking-item">
+              <span class="booking-dot"></span>
+              <span>{{ item }}</span>
+            </div>
+          }
         </div>
 
         <div class="booking-footer">
@@ -81,17 +83,17 @@
     <div class="section-heading">
       <p class="section-kicker">Enfoque</p>
       <h2>Una forma simple de conocer el estilo y reservar</h2>
-      <p>
-        Explorá trabajos, entendé el proceso y dejá tu consulta sin vueltas.
-      </p>
+      <p>Explorá trabajos, entendé el proceso y dejá tu consulta sin vueltas.</p>
     </div>
 
     <div class="highlight-grid">
-      <article class="highlight-card float-hover" *ngFor="let item of highlights" appRevealOnScroll>
-        <span class="highlight-badge">{{ item.badge }}</span>
-        <h3>{{ item.title }}</h3>
-        <p>{{ item.description }}</p>
-      </article>
+      @for (item of highlights; track item.title) {
+        <article class="highlight-card float-hover" appRevealOnScroll>
+          <span class="highlight-badge">{{ item.badge }}</span>
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.description }}</p>
+        </article>
+      }
     </div>
   </section>
 
@@ -135,11 +137,13 @@
     </div>
 
     <div class="process-grid">
-      <article class="process-card float-hover" *ngFor="let step of processSteps" appRevealOnScroll>
-        <span class="process-number">{{ step.step }}</span>
-        <h3>{{ step.title }}</h3>
-        <p>{{ step.description }}</p>
-      </article>
+      @for (step of processSteps; track step.step) {
+        <article class="process-card float-hover" appRevealOnScroll>
+          <span class="process-number">{{ step.step }}</span>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.description }}</p>
+        </article>
+      }
     </div>
   </section>
 
@@ -150,17 +154,17 @@
     </div>
 
     <div class="works-grid">
-      <article class="work-card float-hover" *ngFor="let work of works" appRevealOnScroll>
-        <div
-          class="work-image"
-          [style.background-image]="'linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.72)), url(' + work.image + ')'"
-        ></div>
-
-        <div class="work-content">
-          <h3>{{ work.title }}</h3>
-          <p>{{ work.subtitle }}</p>
-        </div>
-      </article>
+      @for (work of works; track work.title) {
+        <article class="work-card float-hover" appRevealOnScroll>
+          <div class="work-image">
+            <img [src]="work.image" [alt]="work.title" loading="lazy" decoding="async" />
+          </div>
+          <div class="work-content">
+            <h3>{{ work.title }}</h3>
+            <p>{{ work.subtitle }}</p>
+          </div>
+        </article>
+      }
     </div>
 
     <div class="works-action">
@@ -173,9 +177,7 @@
       <div>
         <p class="section-kicker">Solicitud</p>
         <h2>¿Tenés una idea?</h2>
-        <p>
-          Elegí fecha, revisá horarios disponibles y solicita tu turno desde la web.
-        </p>
+        <p>Elegí fecha, revisá horarios disponibles y solicita tu turno desde la web.</p>
       </div>
 
       <a routerLink="/turnos" class="btn btn-primary">Ir a la agenda</a>

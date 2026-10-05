@@ -1,11 +1,4 @@
-import {
-  Directive,
-  ElementRef,
-  OnInit,
-  Renderer2,
-  Inject,
-  PLATFORM_ID
-} from '@angular/core';
+import { Directive, ElementRef, OnInit, Renderer2, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
 @Directive({
@@ -13,15 +6,10 @@ import { isPlatformBrowser } from '@angular/common';
   standalone: true
 })
 export class RevealOnScrollDirective implements OnInit {
-  private isBrowser: boolean;
+  private el = inject(ElementRef);
+  private renderer = inject(Renderer2);
 
-  constructor(
-    private el: ElementRef,
-    private renderer: Renderer2,
-    @Inject(PLATFORM_ID) platformId: object
-  ) {
-    this.isBrowser = isPlatformBrowser(platformId);
-  }
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   ngOnInit(): void {
     this.renderer.addClass(this.el.nativeElement, 'reveal');

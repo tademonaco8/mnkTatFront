@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RevealOnScrollDirective } from '../../shared/directives/reveal-on-scroll.directive';
 
@@ -24,7 +23,7 @@ interface PreviewWork {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, RevealOnScrollDirective],
+  imports: [RouterLink, RevealOnScrollDirective],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -61,7 +60,7 @@ export class HomeComponent {
     {
       step: '03',
       title: 'Reserva',
-      description: 'Elegís fecha, horario y dejás tu turno confirmado desde la web.'
+      description: 'Elegís fecha y horario, y dejás tu solicitud de turno desde la web.'
     },
     {
       step: '04',
@@ -74,23 +73,23 @@ export class HomeComponent {
     {
       title: 'Black & Grey',
       subtitle: 'Sombras, contraste y profundidad',
-      image: 'assets/img/work-7.jpg'
+      image: 'assets/img/work-7.webp'
     },
     {
       title: 'Lettering',
       subtitle: 'Línea suave y orgánica.',
-      image: 'assets/img/work-1.jpg'
+      image: 'assets/img/work-1.webp'
     },
     {
       title: 'Minimal',
       subtitle: 'Diseño pensado para shockear con su simplicidad.',
-      image: 'assets/img/work-6.jpg'
+      image: 'assets/img/work-6.webp'
     }
   ];
 
   bookingPreview = [
     'Martes · 18:30',
     'Jueves · 20:00',
-    'Sábado · 12:00'
+    'Sábado · 12:30'
   ];
 }

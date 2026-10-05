@@ -13,14 +13,14 @@
       </h1>
 
       <p class="about-hero__text">
-        Soy Tadeo, detrás de MNK INK. Trabajo una estética ligada a lo oscuro,
-        lo ornamental, lo gótico y lo surreal.
+        Soy Tadeo, detrás de MNK INK. Trabajo una estética ligada a lo oscuro, lo ornamental, lo
+        gótico y lo surreal.
       </p>
 
       <p class="about-hero__text">
-        Me interesan las piezas con presencia: ojos, rostros fragmentados, letras,
-        símbolos, sombras suaves y formas que no se sienten del todo normales.
-        La idea es que cada tatuaje tenga algo propio, no que sea una copia más de Pinterest.
+        Me interesan las piezas con presencia: ojos, rostros fragmentados, letras, símbolos, sombras
+        suaves y formas que no se sienten del todo normales. La idea es que cada tatuaje tenga algo
+        propio, no que sea una copia más de Pinterest.
       </p>
 
       <div class="about-actions">
@@ -34,7 +34,7 @@
         <div class="profile-card__image">
           <div class="profile-card__glow"></div>
           <div class="profile-card__placeholder">
-            <img src="assets/img/logo-about.png" alt="Logo de MNK INK" />
+            <img src="assets/img/logo-about.webp" alt="Logo de MNK INK" />
           </div>
         </div>
 
@@ -42,8 +42,8 @@
           <p class="profile-card__tag">MNK INK</p>
           <h2>Tadeo / mnk ink</h2>
           <p>
-            Blackwork, dark art, ornamental y diseños personalizados.
-            Piezas oscuras, simbólicas y adaptadas a la zona del cuerpo.
+            Blackwork, dark art, ornamental y diseños personalizados. Piezas oscuras, simbólicas y
+            adaptadas a la zona del cuerpo.
           </p>
         </div>
       </article>
@@ -52,10 +52,12 @@
         <p class="profile-card__tag">Estilo</p>
 
         <div class="stats-grid">
-          <div class="stat-item" *ngFor="let stat of stats">
-            <strong>{{ stat.value }}</strong>
-            <span>{{ stat.label }}</span>
-          </div>
+          @for (stat of stats; track stat.value) {
+            <div class="stat-item">
+              <strong>{{ stat.value }}</strong>
+              <span>{{ stat.label }}</span>
+            </div>
+          }
         </div>
       </article>
     </div>
@@ -66,16 +68,18 @@
       <p class="section-kicker">Enfoque</p>
       <h2>No busco hacer piezas genéricas</h2>
       <p>
-        Cada tatuaje parte de una idea, una zona del cuerpo y una intención visual.
-        A veces la pieza es simple; otras veces más cargada. Pero siempre tiene que tener presencia.
+        Cada tatuaje parte de una idea, una zona del cuerpo y una intención visual. A veces la pieza
+        es simple; otras veces más cargada. Pero siempre tiene que tener presencia.
       </p>
     </div>
 
     <div class="values-grid">
-      <article class="value-card" *ngFor="let item of values">
-        <h3>{{ item.title }}</h3>
-        <p>{{ item.description }}</p>
-      </article>
+      @for (item of values; track item.title) {
+        <article class="value-card">
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.description }}</p>
+        </article>
+      }
     </div>
   </section>
 
@@ -86,23 +90,21 @@
         <h2>Oscuro, ornamental y un poco raro</h2>
 
         <p>
-          Mi búsqueda va por piezas con contraste, líneas filosas, sombras suaves
-          y una atmósfera más pesada. Me gusta lo que tiene algo de misterio,
-          lo que no se explica del todo y lo que deja una sensación.
+          Mi búsqueda va por piezas con contraste, líneas filosas, sombras suaves y una atmósfera
+          más pesada. Me gusta lo que tiene algo de misterio, lo que no se explica del todo y lo que
+          deja una sensación.
         </p>
 
         <p>
-          Todavía estoy construyendo mi lenguaje, pero hay cosas que se repiten:
-          ojos, rostros, símbolos, letras góticas, formas orgánicas y composiciones
-          con una carga visual más oscura.
+          Todavía estoy construyendo mi lenguaje, pero hay cosas que se repiten: ojos, rostros,
+          símbolos, letras góticas, formas orgánicas y composiciones con una carga visual más
+          oscura.
         </p>
       </div>
 
       <div class="story-card__quote">
         <div class="quote-box">
-          <p>
-            “Una buena pieza no tiene que explicar todo, pero tiene que tener presencia.”
-          </p>
+          <p>“Una buena pieza no tiene que explicar todo, pero tiene que tener presencia.”</p>
         </div>
       </div>
     </div>
@@ -115,11 +117,13 @@
     </div>
 
     <div class="timeline-grid">
-      <article class="timeline-card" *ngFor="let item of timeline">
-        <span class="timeline-card__step">{{ item.step }}</span>
-        <h3>{{ item.title }}</h3>
-        <p>{{ item.description }}</p>
-      </article>
+      @for (item of timeline; track item.step) {
+        <article class="timeline-card">
+          <span class="timeline-card__step">{{ item.step }}</span>
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.description }}</p>
+        </article>
+      }
     </div>
   </section>
 
@@ -129,8 +133,8 @@
         <p class="section-kicker">Turnos</p>
         <h2>¿Tenés una idea para tatuarte?</h2>
         <p>
-          Mandame la idea, la zona del cuerpo y algunas referencias.
-          Desde ahí vemos si va con mi estilo y coordinamos diseño, presupuesto y seña.
+          Mandame la idea, la zona del cuerpo y algunas referencias. Desde ahí vemos si va con mi
+          estilo y coordinamos diseño, presupuesto y seña.
         </p>
       </div>
 

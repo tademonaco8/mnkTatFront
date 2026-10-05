@@ -6,54 +6,51 @@
     <section class="footer__hero">
       <div class="footer__brand">
         <div class="footer__brand-mark">
-          <img src="assets/img/profile-photo.png" alt="Logo de mnk ink" />
+          <img src="assets/img/profile-photo.webp" alt="Logo de mnk ink" />
         </div>
 
         <div class="footer__brand-copy">
           <p class="footer__eyebrow">mnk Tattoo</p>
           <h2>Tatuajes con identidad y una experiencia de reserva más cuidada.</h2>
           <p>
-            Un espacio para explorar trabajos, conocer el proceso y reservar una consulta para tu próxima pieza.
+            Un espacio para explorar trabajos, conocer el proceso y reservar una consulta para tu
+            próxima pieza.
           </p>
         </div>
       </div>
 
       <div class="footer__hero-actions">
-        <a routerLink="/turnos" class="footer__cta footer__cta--primary">
-          Solicitar turno
-        </a>
+        <a routerLink="/turnos" class="footer__cta footer__cta--primary"> Solicitar turno </a>
 
-        <a routerLink="/gallery" class="footer__cta footer__cta--secondary">
-          Ver trabajos
-        </a>
+        <a routerLink="/gallery" class="footer__cta footer__cta--secondary"> Ver trabajos </a>
       </div>
     </section>
 
     <section class="footer__cards">
-      <article class="footer__info-card" *ngFor="let card of contactCards">
-        <span>{{ card.title }}</span>
-        <strong>{{ card.value }}</strong>
-        <small>{{ card.caption }}</small>
-      </article>
+      @for (card of contactCards; track card.title) {
+        <article class="footer__info-card">
+          <span>{{ card.title }}</span>
+          <strong>{{ card.value }}</strong>
+          <small>{{ card.caption }}</small>
+        </article>
+      }
     </section>
 
     <section class="footer__content">
       <div class="footer__column">
         <h3>Navegación</h3>
 
-        <a
-          *ngFor="let item of navLinks"
-          [routerLink]="item.path"
-          class="footer__link"
-        >
-          {{ item.label }}
-        </a>
+        @for (item of navLinks; track item.label) {
+          <a [routerLink]="item.path" class="footer__link">
+            {{ item.label }}
+          </a>
+        }
       </div>
 
       <div class="footer__column">
         <h3>Contacto</h3>
 
-        <a class="footer__link" href="mailto:tade.monaco8&#64;gmail.com">
+        <a class="footer__link" href="mailto:tademonaco8&#64;gmail.com">
           tademonaco8&#64;gmail.com
         </a>
 
@@ -72,15 +69,11 @@
       <div class="footer__column">
         <h3>Redes</h3>
 
-        <a
-          *ngFor="let item of socialLinks"
-          class="footer__link"
-          [href]="item.href"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {{ item.label }}
-        </a>
+        @for (item of socialLinks; track item.label) {
+          <a class="footer__link" [href]="item.href" target="_blank" rel="noopener noreferrer">
+            {{ item.label }}
+          </a>
+        }
       </div>
     </section>
 

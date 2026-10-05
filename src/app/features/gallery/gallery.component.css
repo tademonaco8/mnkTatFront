@@ -145,9 +145,41 @@
 }
 
 .gallery-card__image {
+  position: relative;
   min-height: 340px;
-  background-size: cover;
-  background-position: center;
+  background: #0f0f12;
+}
+
+.gallery-card__image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-card__image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.78));
+}
+
+/* Botón que cubre toda la tarjeta: hace que sea accesible con teclado */
+.gallery-card__open {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+.gallery-card__open:focus-visible {
+  outline: 2px solid #d86a6a;
+  outline-offset: -4px;
 }
 
 .gallery-card--featured .gallery-card__image {

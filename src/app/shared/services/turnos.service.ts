@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -17,27 +17,35 @@ export interface CreateBookingResponse {
   htmlLink: string;
 }
 
-export interface BusySlotResponse {
-  start: string | null;
-  end: string | null;
+/** Un horario del día, tal como lo devuelve el backend (hora local del estudio). */
+export interface AvailableSlot {
+  start: string; // "2026-10-17T15:00:00"
+  end: string;
+  available: boolean;
+}
+
+export interface AvailabilityResponse {
+  date: string;
+  durationMinutes: number;
+  allowedDurations: number[];
+  slots: AvailableSlot[];
 }
 
 @Injectable({ providedIn: 'root' })
 export class TurnosService {
-  private readonly apiUrl = `${environment.apiBaseUrl}/api/bookings`;
-  private readonly availabilityUrl = `${environment.apiBaseUrl}/api/availability`;
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {}
+  private readonly apiUrl = `${environment.apiBaseUrl}/api/bookings`;
+  private readonly availabilityUrl = `${environment.apiBaseUrl}/api/availability/slots`;
 
   crearTurno(payload: CreateBookingRequest): Observable<CreateBookingResponse> {
     return this.http.post<CreateBookingResponse>(this.apiUrl, payload);
   }
 
-  obtenerTurnosDelDia(day: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}?day=${day}`);
-  }
-
-  obtenerDisponibilidad(day: string): Observable<BusySlotResponse[]> {
-    return this.http.get<BusySlotResponse[]>(`${this.availabilityUrl}?day=${day}`);
+  /** Horarios habilitados del día con su disponibilidad para la duración elegida. */
+  obtenerHorarios(day: string, durationMinutes: number): Observable<AvailabilityResponse> {
+    return this.http.get<AvailabilityResponse>(this.availabilityUrl, {
+      params: { day, durationMinutes }
+    });
   }
 }

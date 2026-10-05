@@ -25,6 +25,11 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/public",
+                "output": "/"
               }
             ],
             "styles": [
@@ -79,6 +84,10 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               {
@@ -90,6 +99,11 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/public",
+                "output": "/"
               }
             ],
             "styles": [

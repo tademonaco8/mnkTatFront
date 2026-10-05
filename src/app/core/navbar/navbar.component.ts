@@ -1,19 +1,22 @@
-import { Component, HostListener, Inject, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, HostListener, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
+  private readonly router = inject(Router);
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
   isMenuOpen = false;
   isScrolled = false;
-  private isBrowser: boolean;
 
   navItems = [
     { label: 'Inicio', path: '/' },
@@ -22,21 +25,14 @@ export class NavbarComponent {
     { label: 'Turnos', path: '/turnos' }
   ];
 
-  constructor(
-    private router: Router,
-    @Inject(PLATFORM_ID) platformId: object
-  ) {
-    this.isBrowser = isPlatformBrowser(platformId);
-
+  constructor() {
+    // El scroll al inicio de cada página lo maneja el router (withInMemoryScrolling en app.config.ts).
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.closeMenu();
-
-        if (this.isBrowser) {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      });
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntilDestroyed()
+      )
+      .subscribe(() => this.closeMenu());
   }
 
   toggleMenu(): void {
@@ -47,6 +43,11 @@ export class NavbarComponent {
   closeMenu(): void {
     this.isMenuOpen = false;
     this.syncBodyScroll();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.isMenuOpen) this.closeMenu();
   }
 
   @HostListener('window:scroll')

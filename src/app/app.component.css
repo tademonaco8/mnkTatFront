@@ -4,6 +4,14 @@
   background: #0d0d0f;
 }
 
-.app-shell {
-  min-height: calc(100vh - 160px);
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #111827;
+  color: #fff;
+}
+
+.app-main {
+  flex: 1;
 }

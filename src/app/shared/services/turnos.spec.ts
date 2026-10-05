@@ -1,13 +1,17 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
-import { Turnos } from './turnos.service';
+import { TurnosService } from './turnos.service';
 
-describe('Turnos', () => {
-  let service: Turnos;
+describe('TurnosService', () => {
+  let service: TurnosService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(Turnos);
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()]
+    });
+    service = TestBed.inject(TurnosService);
   });
 
   it('should be created', () => {

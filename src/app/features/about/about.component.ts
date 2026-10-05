@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 interface ValueItem {
@@ -16,7 +15,7 @@ interface TimelineItem {
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.css']
 })

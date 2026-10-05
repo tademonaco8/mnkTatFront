@@ -3,8 +3,8 @@
     <p class="booking-eyebrow">MNK Tattoo Booking</p>
     <h1>Solicitá tu turno de forma simple</h1>
     <p class="booking-description">
-      Elegí una fecha disponible, contame tu idea y dejá tu solicitud.
-      Después coordinamos los detalles del diseño y la seña.
+      Elegí una fecha disponible, contame tu idea y dejá tu solicitud. Después coordinamos los
+      detalles del diseño y la seña.
     </p>
   </div>
 
@@ -37,9 +37,9 @@
           [(ngModel)]="turno.duracionMinutos"
           (change)="onDurationChange()"
         >
-          <option *ngFor="let option of durationOptions" [ngValue]="option.value">
-            {{ option.label }}
-          </option>
+          @for (option of durationOptions; track option.value) {
+            <option [ngValue]="option.value">{{ option.label }}</option>
+          }
         </select>
       </div>
 
@@ -50,42 +50,45 @@
         </p>
       </div>
 
-      <div *ngIf="isLoadingAvailability" class="state-box">
-        Consultando disponibilidad...
-      </div>
-
-      <div
-        *ngIf="!isLoadingAvailability && availableSlots.length === 0"
-        class="state-box state-muted"
-      >
-        No hay horarios habilitados para esta fecha.
-      </div>
-
-      <div
-        *ngIf="!isLoadingAvailability && availableSlots.length > 0"
-        class="slots-grid"
-      >
-        <button
-          *ngFor="let slot of availableSlots"
-          type="button"
-          class="slot-btn"
-          [class.slot-btn--selected]="selectedSlot?.startLocal === slot.startLocal"
-          [class.slot-btn--disabled]="!slot.available"
-          [disabled]="!slot.available"
-          (click)="selectSlot(slot)"
-        >
-          <span>{{ slot.label }}</span>
-          <small>{{ slot.available ? 'Disponible' : 'Ocupado' }}</small>
-        </button>
-      </div>
+      @if (isLoadingAvailability) {
+        <div class="state-box">
+          Consultando disponibilidad...
+          @if (isSlowLoading) {
+            <small class="state-hint">
+              El servidor se está despertando, la primera consulta puede tardar hasta un minuto.
+            </small>
+          }
+        </div>
+      } @else if (availabilityError) {
+        <div class="state-box state-muted">
+          No pudimos cargar los horarios.
+          <button type="button" class="retry-btn" (click)="loadAvailability()">Reintentar</button>
+        </div>
+      } @else if (availableSlots.length === 0) {
+        <div class="state-box state-muted">No hay horarios habilitados para esta fecha.</div>
+      } @else {
+        <div class="slots-grid">
+          @for (slot of availableSlots; track slot.start) {
+            <button
+              type="button"
+              class="slot-btn"
+              [class.slot-btn--selected]="selectedSlot?.start === slot.start"
+              [class.slot-btn--disabled]="!slot.available"
+              [disabled]="!slot.available"
+              (click)="selectSlot(slot)"
+            >
+              <span>{{ formatHour(slot.start) }} - {{ formatHour(slot.end) }}</span>
+              <small>{{ slot.available ? 'Disponible' : 'Ocupado' }}</small>
+            </button>
+          }
+        </div>
+      }
     </article>
 
     <article class="booking-card">
       <div class="card-header">
         <h2>3. Completá tus datos</h2>
-        <p>
-          Dejá la información básica para registrar la reserva y poder coordinar los detalles.
-        </p>
+        <p>Dejá la información básica para registrar la reserva y poder coordinar los detalles.</p>
       </div>
 
       <form class="booking-form" (ngSubmit)="enviarTurno()">
@@ -97,6 +100,7 @@
             name="nombre"
             [(ngModel)]="turno.nombre"
             placeholder="Tu nombre"
+            autocomplete="name"
             required
           />
         </div>
@@ -109,16 +113,21 @@
             name="email"
             [(ngModel)]="turno.email"
             placeholder="tuemail@ejemplo.com"
+            autocomplete="email"
             required
           />
+          @if (turno.email && !isEmailValid) {
+            <small class="field-error">Revisá el formato del email.</small>
+          }
         </div>
 
         <div class="field-block">
           <label for="telefono">Teléfono</label>
           <input
             id="telefono"
-            type="text"
+            type="tel"
             name="telefono"
+            autocomplete="tel"
             [(ngModel)]="turno.telefono"
             placeholder="Opcional"
           />
@@ -141,7 +150,9 @@
           <div class="summary-row">
             <span>Fecha y horario</span>
             <strong>
-              {{ selectedSlot ? formatDisplayDateTime(selectedSlot.startLocal) : 'Sin seleccionar' }}
+              {{
+                selectedSlot ? formatDisplayDateTime(selectedSlot.start) : 'Sin seleccionar'
+              }}
             </strong>
           </div>
 
@@ -165,46 +176,73 @@
     </article>
   </div>
 
-  <article *ngIf="successBooking" class="success-card">
-    <p class="success-pill">Solicitud enviada</p>
-    <h2>Tu solicitud quedó registrada</h2>
+  @if (successBooking) {
+    <article class="success-card">
+      <p class="success-pill">Solicitud enviada</p>
+      <h2>Tu solicitud quedó registrada</h2>
 
-    <div class="success-grid">
-      <div>
-        <span>Cliente</span>
-        <strong>{{ successBooking.clientName }}</strong>
+      <div class="success-grid">
+        <div>
+          <span>Cliente</span>
+          <strong>{{ successBooking.clientName }}</strong>
+        </div>
+
+        <div>
+          <span>Email</span>
+          <strong>{{ successBooking.clientEmail }}</strong>
+        </div>
+
+        <div>
+          <span>Fecha y hora</span>
+          <strong>{{ formatDisplayDateTime(successBooking.startLocal) }}</strong>
+        </div>
+
+        <div>
+          <span>Duración</span>
+          <strong>{{ successBooking.durationMinutes / 60 }} h</strong>
+        </div>
       </div>
 
-      <div>
-        <span>Email</span>
-        <strong>{{ successBooking.clientEmail }}</strong>
+      <div class="success-message">
+        <strong>Solicitud recibida.</strong>
+        <p>
+          Tu solicitud quedó registrada. Te voy a contactar para confirmar diseño, zona,
+          presupuesto, seña y detalles finales del turno.
+        </p>
       </div>
 
-      <div>
-        <span>Fecha y hora</span>
-        <strong>{{ formatDisplayDateTime(successBooking.startLocal) }}</strong>
+      <div class="calendar-actions">
+        <a
+          [href]="getGoogleCalendarUrl()"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="gcal-btn"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          Agregar a Google Calendar
+        </a>
       </div>
+    </article>
+  }
 
-      <div>
-        <span>Duración</span>
-        <strong>{{ successBooking.durationMinutes / 60 }} h</strong>
-      </div>
+  @if (showToast) {
+    <div class="toast" [class.toast--error]="isErrorToast" role="status" aria-live="polite">
+      {{ toastMessage }}
     </div>
-
-    <div class="success-message">
-      <strong>Solicitud recibida.</strong>
-      <p>
-        Tu solicitud quedó registrada. Te voy a contactar para confirmar diseño,
-        zona, presupuesto, seña y detalles finales del turno.
-      </p>
-    </div>
-  </article>
-
-  <div
-    *ngIf="showToast"
-    class="toast"
-    [class.toast--error]="isErrorToast"
-  >
-    {{ toastMessage }}
-  </div>
+  }
 </section>

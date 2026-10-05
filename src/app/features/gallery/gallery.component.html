@@ -6,22 +6,23 @@
     <p class="section-kicker">Trabajos realizados</p>
     <h1>Tatuajes con presencia, contraste y concepto</h1>
     <p class="gallery-description">
-      Una selección pensada para mostrar estilo, proceso y criterio visual.
-      Cada pieza busca sostener una identidad clara, tanto de cerca como a distancia.
+      Una selección pensada para mostrar estilo, proceso y criterio visual. Cada pieza busca
+      sostener una identidad clara, tanto de cerca como a distancia.
     </p>
   </section>
 
   <section class="gallery-toolbar container">
     <div class="filter-group">
-      <button
-        *ngFor="let filter of filters"
-        type="button"
-        class="filter-chip"
-        [class.filter-chip--active]="activeFilter === filter.value"
-        (click)="setFilter(filter.value)"
-      >
-        {{ filter.label }}
-      </button>
+      @for (filter of filters; track filter.value) {
+        <button
+          type="button"
+          class="filter-chip"
+          [class.filter-chip--active]="activeFilter === filter.value"
+          (click)="setFilter(filter.value)"
+        >
+          {{ filter.label }}
+        </button>
+      }
     </div>
 
     <div class="gallery-stats">
@@ -30,32 +31,35 @@
   </section>
 
   <section class="gallery-grid container">
-    <article
-      *ngFor="let work of filteredWorks; trackBy: trackByWork"
-      class="gallery-card"
-      [class.gallery-card--featured]="work.featured"
-      (click)="openWork(work)"
-    >
-      <div
-        class="gallery-card__image"
-        [style.background-image]="'linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.78)), url(' + work.image + ')'"
-      ></div>
-
-      <div class="gallery-card__content">
-        <div class="gallery-card__topline">
-          <span class="gallery-card__category">{{ work.category.join(' · ') }}</span>
-          <span *ngIf="work.featured" class="gallery-card__featured">Destacado</span>
+    @for (work of filteredWorks; track work.id) {
+      <article class="gallery-card" [class.gallery-card--featured]="work.featured">
+        <button
+          type="button"
+          class="gallery-card__open"
+          (click)="openWork(work)"
+          [attr.aria-label]="'Ver detalle: ' + work.title"
+        ></button>
+        <div class="gallery-card__image">
+          <img [src]="work.image" [alt]="work.title" loading="lazy" decoding="async" />
         </div>
-
-        <h2>{{ work.title }}</h2>
-        <p class="gallery-card__subtitle">{{ work.subtitle }}</p>
-        <p class="gallery-card__description">{{ work.description }}</p>
-
-        <div class="gallery-card__tags">
-          <span *ngFor="let tag of work.tags">{{ tag }}</span>
+        <div class="gallery-card__content">
+          <div class="gallery-card__topline">
+            <span class="gallery-card__category">{{ formatCategories(work.category) }}</span>
+            @if (work.featured) {
+              <span class="gallery-card__featured">Destacado</span>
+            }
+          </div>
+          <h2>{{ work.title }}</h2>
+          <p class="gallery-card__subtitle">{{ work.subtitle }}</p>
+          <p class="gallery-card__description">{{ work.description }}</p>
+          <div class="gallery-card__tags">
+            @for (tag of work.tags; track tag) {
+              <span>{{ tag }}</span>
+            }
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
+    }
   </section>
 
   <section class="gallery-note container">
@@ -63,44 +67,45 @@
       <p class="section-kicker">Diseños personalizados</p>
       <h2>¿Querés una pieza con esta línea estética?</h2>
       <p>
-        Podés tomar estos trabajos como referencia y contarme tu idea para armar una propuesta propia,
-        adaptada a la zona, tamaño y estilo que buscás.
+        Podés tomar estos trabajos como referencia y contarme tu idea para armar una propuesta
+        propia, adaptada a la zona, tamaño y estilo que buscás.
       </p>
     </div>
   </section>
 
-  <div
-    *ngIf="selectedWork"
-    class="gallery-modal-backdrop"
-    (click)="closeModal()"
-  >
-    <div
-      class="gallery-modal"
-      (click)="$event.stopPropagation()"
-    >
-      <button
-        type="button"
-        class="gallery-modal__close"
-        (click)="closeModal()"
-        aria-label="Cerrar"
+  @if (selectedWork) {
+    <div class="gallery-modal-backdrop" (click)="closeModal()">
+      <div
+        class="gallery-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="gallery-modal-title"
+        (click)="$event.stopPropagation()"
       >
-        ×
-      </button>
-
-      <div class="gallery-modal__media">
-        <img [src]="selectedWork.image" [alt]="selectedWork.title" />
-      </div>
-
-      <div class="gallery-modal__content">
-        <p class="section-kicker">Detalle</p>
-        <h2>{{ selectedWork.title }}</h2>
-        <p class="gallery-modal__subtitle">{{ selectedWork.subtitle }}</p>
-        <p class="gallery-modal__description">{{ selectedWork.description }}</p>
-
-        <div class="gallery-modal__tags">
-          <span *ngFor="let tag of selectedWork.tags">{{ tag }}</span>
+        <button
+          #closeButton
+          type="button"
+          class="gallery-modal__close"
+          (click)="closeModal()"
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+        <div class="gallery-modal__media">
+          <img [src]="selectedWork.image" [alt]="selectedWork.title" decoding="async" />
+        </div>
+        <div class="gallery-modal__content">
+          <p class="section-kicker">Detalle</p>
+          <h2 id="gallery-modal-title">{{ selectedWork.title }}</h2>
+          <p class="gallery-modal__subtitle">{{ selectedWork.subtitle }}</p>
+          <p class="gallery-modal__description">{{ selectedWork.description }}</p>
+          <div class="gallery-modal__tags">
+            @for (tag of selectedWork.tags; track tag) {
+              <span>{{ tag }}</span>
+            }
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  }
 </section>

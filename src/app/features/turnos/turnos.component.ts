@@ -1,18 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import {
   TurnosService,
   CreateBookingRequest,
-  BusySlotResponse
+  AvailableSlot
 } from '../../shared/services/turnos.service';
-
-interface AvailableSlot {
-  label: string;
-  startLocal: string;
-  endLocal: string;
-  available: boolean;
-}
 
 interface BookingConfirmation {
   clientName: string;
@@ -22,14 +15,25 @@ interface BookingConfirmation {
   notes?: string | null;
 }
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+/** Después de este tiempo cargando, avisamos que el servidor puede estar "despertando" (Render free). */
+const SLOW_LOADING_MS = 4000;
+
 @Component({
   selector: 'app-turnos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './turnos.component.html',
   styleUrls: ['./turnos.component.css']
 })
 export class TurnosComponent implements OnInit {
+  private readonly turnosService = inject(TurnosService);
+
+  private availabilitySub?: Subscription;
+  private toastTimer?: ReturnType<typeof setTimeout>;
+  private slowLoadingTimer?: ReturnType<typeof setTimeout>;
+
   turno = {
     nombre: '',
     email: '',
@@ -39,8 +43,8 @@ export class TurnosComponent implements OnInit {
   };
 
   selectedDate = '';
-  busySlots: BusySlotResponse[] = [];
   availableSlots: AvailableSlot[] = [];
+  availabilityError = false;
   selectedSlot: AvailableSlot | null = null;
 
   toastMessage = '';
@@ -48,6 +52,7 @@ export class TurnosComponent implements OnInit {
   isErrorToast = false;
 
   isLoadingAvailability = false;
+  isSlowLoading = false;
   isSubmitting = false;
 
   minDate = '';
@@ -60,23 +65,13 @@ export class TurnosComponent implements OnInit {
     { label: '3 horas', value: 180 }
   ];
 
-  readonly allowedSlotsByDay: { [key: number]: string[] } = {
-    // 0 = domingo
-    // 1 = lunes
-    // 2 = martes
-    // 3 = miércoles
-    // 4 = jueves
-    // 5 = viernes
-    // 6 = sábado
-    1: ['19:30', '21:00'],          // lunes
-    2: ['18:30', '20:00'],
-    3: ['19:30', '21:00'],          // miércoles
-    4: ['18:30', '20:00'],          // jueves
-    5: ['19:30', '21:00'],          // viernes
-    6: ['10:00', '12:30', '15:00', '18:30', '20:00']  // sábado
-  };
-
-  constructor(private turnosService: TurnosService) {}
+  constructor() {
+    inject(DestroyRef).onDestroy(() => {
+      this.availabilitySub?.unsubscribe();
+      clearTimeout(this.toastTimer);
+      clearTimeout(this.slowLoadingTimer);
+    });
+  }
 
   ngOnInit(): void {
     this.minDate = this.getTomorrowDate();
@@ -93,7 +88,7 @@ export class TurnosComponent implements OnInit {
   onDurationChange(): void {
     this.selectedSlot = null;
     this.successBooking = null;
-    this.generateSlots();
+    this.loadAvailability();
   }
 
   loadAvailability(): void {
@@ -102,59 +97,29 @@ export class TurnosComponent implements OnInit {
       return;
     }
 
-    this.isLoadingAvailability = true;
+    // Si el usuario cambia de fecha rápido, cancelamos la consulta anterior
+    // para que una respuesta vieja no pise a la nueva.
+    this.availabilitySub?.unsubscribe();
+    this.setLoadingAvailability(true);
 
-    this.turnosService.obtenerDisponibilidad(this.selectedDate).subscribe({
-      next: (busy) => {
-        this.busySlots = busy || [];
-        this.generateSlots();
-        this.isLoadingAvailability = false;
-      },
-      error: () => {
-        this.busySlots = [];
-        this.generateSlots();
-        this.isLoadingAvailability = false;
-        this.mostrarToast('No se pudo consultar la disponibilidad.', true);
-      }
-    });
+    this.availabilityError = false;
+
+    this.availabilitySub = this.turnosService
+      .obtenerHorarios(this.selectedDate, this.turno.duracionMinutos)
+      .subscribe({
+        next: (res) => {
+          // Los horarios vienen del backend (appsettings.json → Schedule).
+          this.availableSlots = res.slots ?? [];
+          this.setLoadingAvailability(false);
+        },
+        error: () => {
+          this.availableSlots = [];
+          this.availabilityError = true;
+          this.setLoadingAvailability(false);
+          this.mostrarToast('No se pudo consultar la disponibilidad.', true);
+        }
+      });
   }
-
-  generateSlots(): void {
-  if (!this.selectedDate) {
-    this.availableSlots = [];
-    return;
-  }
-
-  const allowedSlots = this.getAllowedSlotsForSelectedDate();
-
-  if (allowedSlots.length === 0) {
-    this.availableSlots = [];
-    return;
-  }
-
-  const slots: AvailableSlot[] = [];
-  const durationMs = this.turno.duracionMinutos * 60 * 1000;
-
-  allowedSlots.forEach((slotTime) => {
-    const [hours, minutes] = slotTime.split(':').map(Number);
-
-    const startDate = this.buildDate(this.selectedDate, hours, minutes);
-    const endDate = new Date(startDate.getTime() + durationMs);
-
-    const available = !this.busySlots.some((busy) =>
-      this.overlapsWithBusySlot(startDate, endDate, busy)
-    );
-
-    slots.push({
-      label: `${this.formatHour(startDate)} - ${this.formatHour(endDate)}`,
-      startLocal: this.toLocalDateTimeString(startDate),
-      endLocal: this.toLocalDateTimeString(endDate),
-      available
-    });
-  });
-
-  this.availableSlots = slots;
-}
 
   selectSlot(slot: AvailableSlot): void {
     if (!slot.available) return;
@@ -164,8 +129,13 @@ export class TurnosComponent implements OnInit {
   }
 
   enviarTurno(): void {
-    if (!this.turno.nombre || !this.turno.email) {
+    if (!this.turno.nombre.trim() || !this.turno.email.trim()) {
       this.mostrarToast('Completá nombre y email.', true);
+      return;
+    }
+
+    if (!this.isEmailValid) {
+      this.mostrarToast('Revisá el email, parece tener un error.', true);
       return;
     }
 
@@ -178,7 +148,7 @@ export class TurnosComponent implements OnInit {
       clientName: this.turno.nombre.trim(),
       clientEmail: this.turno.email.trim(),
       phone: this.turno.telefono?.trim() || null,
-      startLocal: this.selectedSlot.startLocal,
+      startLocal: this.selectedSlot.start,
       durationMinutes: this.turno.duracionMinutos,
       notes: this.turno.descripcion?.trim() || null
     };
@@ -211,14 +181,28 @@ export class TurnosComponent implements OnInit {
       },
       error: (err) => {
         this.isSubmitting = false;
-        const mensaje = err?.error?.message || 'No se pudo crear el turno.';
-        this.mostrarToast(mensaje, true);
+        this.mostrarToast(this.getErrorMessage(err), true);
+
+        // Si el horario se ocupó mientras tanto, refrescamos la lista.
+        if (err?.status === 409) {
+          this.selectedSlot = null;
+          this.loadAvailability();
+        }
       }
     });
   }
 
+  get isEmailValid(): boolean {
+    return EMAIL_PATTERN.test(this.turno.email.trim());
+  }
+
   get canSubmit(): boolean {
-    return !!this.turno.nombre && !!this.turno.email && !!this.selectedSlot && !this.isSubmitting;
+    return !!this.turno.nombre.trim() && this.isEmailValid && !!this.selectedSlot && !this.isSubmitting;
+  }
+
+  /** "2026-10-17T15:00:00" → "15:00" */
+  formatHour(value: string): string {
+    return value.slice(11, 16);
   }
 
   formatDisplayDateTime(value: string): string {
@@ -227,45 +211,6 @@ export class TurnosComponent implements OnInit {
       dateStyle: 'full',
       timeStyle: 'short'
     }).format(date);
-  }
-
-  private overlapsWithBusySlot(start: Date, end: Date, busy: BusySlotResponse): boolean {
-    if (!busy.start || !busy.end) return false;
-
-    const busyStart = new Date(busy.start);
-    const busyEnd = new Date(busy.end);
-
-    return start < busyEnd && end > busyStart;
-  }
-
-  private buildDate(dateStr: string, hours: number, minutes: number): Date {
-    const [year, month, day] = dateStr.split('-').map(Number);
-    return new Date(year, month - 1, day, hours, minutes, 0, 0);
-  }
-  
-  private getAllowedSlotsForSelectedDate(): string[] {
-  if (!this.selectedDate) return [];
-
-  const [year, month, day] = this.selectedDate.split('-').map(Number);
-  const date = new Date(year, month - 1, day);
-  const dayOfWeek = date.getDay();
-
-  return this.allowedSlotsByDay[dayOfWeek] || [];
-}
-
-  private toLocalDateTimeString(date: Date): string {
-    const year = date.getFullYear();
-    const month = this.pad(date.getMonth() + 1);
-    const day = this.pad(date.getDate());
-    const hours = this.pad(date.getHours());
-    const minutes = this.pad(date.getMinutes());
-    const seconds = this.pad(date.getSeconds());
-
-    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-  }
-
-  private formatHour(date: Date): string {
-    return `${this.pad(date.getHours())}:${this.pad(date.getMinutes())}`;
   }
 
   private pad(value: number): string {
@@ -283,13 +228,55 @@ export class TurnosComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
+  /** Toma el mensaje que manda el backend (error simple o de validación). */
+  private getErrorMessage(err: any): string {
+    const validation = err?.error?.errors as Record<string, string[]> | undefined;
+    const firstValidation = validation ? Object.values(validation).flat()[0] : undefined;
+    return err?.error?.message || firstValidation || 'No se pudo crear el turno.';
+  }
+
   private mostrarToast(mensaje: string, error: boolean = false): void {
     this.toastMessage = mensaje;
     this.isErrorToast = error;
     this.showToast = true;
 
-    setTimeout(() => {
+    // Reiniciamos el contador para que un aviso nuevo no se cierre antes de tiempo.
+    clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => {
       this.showToast = false;
     }, 3000);
+  }
+
+  private setLoadingAvailability(loading: boolean): void {
+    this.isLoadingAvailability = loading;
+    this.isSlowLoading = false;
+    clearTimeout(this.slowLoadingTimer);
+
+    if (loading) {
+      this.slowLoadingTimer = setTimeout(() => {
+        this.isSlowLoading = true;
+      }, SLOW_LOADING_MS);
+    }
+  }
+
+  getGoogleCalendarUrl(): string {
+    if (!this.successBooking) return '';
+
+    const title = encodeURIComponent('Turno Tatuaje - Mnk Ink');
+    const details = encodeURIComponent(
+      `Turno agendado en Mnk Ink.\nDuración estimada: ${this.successBooking.durationMinutes / 60} h.\nRecordá venir bien descansado/a y comido/a.`
+    );
+
+    const startDate = new Date(this.successBooking.startLocal);
+    const endDate = new Date(startDate.getTime() + this.successBooking.durationMinutes * 60000);
+
+    const formatGCalDate = (date: Date) => {
+      return date.toISOString().replace(/-|:|\.\d\d\d/g, '');
+    };
+
+    const startStr = formatGCalDate(startDate);
+    const endStr = formatGCalDate(endDate);
+
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startStr}/${endStr}&details=${details}&location=Mnk+Ink+Studio`;
   }
 }
