@@ -1,0 +1,34 @@
+@if (loading()) {
+  <div class="state-box">
+    Consultando disponibilidad...
+    @if (slow()) {
+      <small class="state-hint">
+        El servidor se está despertando, la primera consulta puede tardar hasta un minuto.
+      </small>
+    }
+  </div>
+} @else if (error()) {
+  <div class="state-box state-muted">
+    No pudimos cargar los horarios.
+    <button type="button" class="retry-btn" (click)="reload()">Reintentar</button>
+  </div>
+} @else if (slots().length === 0) {
+  <div class="state-box state-muted">No hay horarios habilitados para esta fecha.</div>
+} @else {
+  <div class="slots-grid">
+    @for (slot of slots(); track slot.start) {
+      <button
+        type="button"
+        class="slot-btn"
+        [class.slot-btn--selected]="selected()?.start === slot.start"
+        [class.slot-btn--disabled]="!isSelectable(slot)"
+        [disabled]="!isSelectable(slot)"
+        [attr.aria-pressed]="selected()?.start === slot.start"
+        (click)="select(slot)"
+      >
+        <span>{{ formatHour(slot.start) }} - {{ formatHour(slot.end) }}</span>
+        <small>{{ statusLabel(slot) }}</small>
+      </button>
+    }
+  </div>
+}

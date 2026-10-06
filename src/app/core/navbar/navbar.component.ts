@@ -22,6 +22,7 @@ export class NavbarComponent {
     { label: 'Inicio', path: '/' },
     { label: 'Trabajos', path: '/gallery' },
     { label: 'Sobre mí', path: '/about' },
+    { label: 'Cuidados', path: '/cuidados' },
     { label: 'Turnos', path: '/turnos' }
   ];
 

@@ -21,6 +21,7 @@ export class FooterComponent {
     { label: 'Inicio', path: '/' },
     { label: 'Trabajos', path: '/gallery' },
     { label: 'Sobre mí', path: '/about' },
+    { label: 'Cuidados y FAQ', path: '/cuidados' },
     { label: 'Turnos', path: '/turnos' }
   ];
 

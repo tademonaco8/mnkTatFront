@@ -5,7 +5,7 @@
   z-index: 3000;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1080px) {
   .navbar {
     position: fixed;
     top: 0;
@@ -142,6 +142,7 @@
 }
 
 .navbar__link {
+  white-space: nowrap;
   position: relative;
   min-height: 44px;
   padding: 0 16px;
@@ -302,7 +303,7 @@
   display: none;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1080px) {
   .navbar__container {
     width: min(100% - 32px, 1180px);
     grid-template-columns: auto auto;

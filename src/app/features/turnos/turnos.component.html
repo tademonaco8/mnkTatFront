@@ -1,10 +1,10 @@
 <section class="booking-page">
   <div class="booking-hero">
-    <p class="booking-eyebrow">MNK Tattoo Booking</p>
+    <p class="booking-eyebrow">MNK Tattoo · Turnos</p>
     <h1>Solicitá tu turno de forma simple</h1>
     <p class="booking-description">
-      Elegí una fecha disponible, contame tu idea y dejá tu solicitud. Después coordinamos los
-      detalles del diseño y la seña.
+      Elegí un horario disponible, contame tu idea y enviá tu solicitud. El horario queda reservado
+      y el turno se confirma cuando coordinamos diseño, presupuesto y seña.
     </p>
   </div>
 
@@ -24,19 +24,13 @@
           type="date"
           name="booking-date"
           [(ngModel)]="selectedDate"
-          (change)="onDateChange()"
           [min]="minDate"
         />
       </div>
 
       <div class="field-block">
         <label for="booking-duration">Duración estimada</label>
-        <select
-          id="booking-duration"
-          name="booking-duration"
-          [(ngModel)]="turno.duracionMinutos"
-          (change)="onDurationChange()"
-        >
+        <select id="booking-duration" name="booking-duration" [(ngModel)]="turno.duracionMinutos">
           @for (option of durationOptions; track option.value) {
             <option [ngValue]="option.value">{{ option.label }}</option>
           }
@@ -50,45 +44,19 @@
         </p>
       </div>
 
-      @if (isLoadingAvailability) {
-        <div class="state-box">
-          Consultando disponibilidad...
-          @if (isSlowLoading) {
-            <small class="state-hint">
-              El servidor se está despertando, la primera consulta puede tardar hasta un minuto.
-            </small>
-          }
-        </div>
-      } @else if (availabilityError) {
-        <div class="state-box state-muted">
-          No pudimos cargar los horarios.
-          <button type="button" class="retry-btn" (click)="loadAvailability()">Reintentar</button>
-        </div>
-      } @else if (availableSlots.length === 0) {
-        <div class="state-box state-muted">No hay horarios habilitados para esta fecha.</div>
-      } @else {
-        <div class="slots-grid">
-          @for (slot of availableSlots; track slot.start) {
-            <button
-              type="button"
-              class="slot-btn"
-              [class.slot-btn--selected]="selectedSlot?.start === slot.start"
-              [class.slot-btn--disabled]="!slot.available"
-              [disabled]="!slot.available"
-              (click)="selectSlot(slot)"
-            >
-              <span>{{ formatHour(slot.start) }} - {{ formatHour(slot.end) }}</span>
-              <small>{{ slot.available ? 'Disponible' : 'Ocupado' }}</small>
-            </button>
-          }
-        </div>
-      }
+      <app-slot-picker
+        [date]="selectedDate"
+        [durationMinutes]="turno.duracionMinutos"
+        [selected]="selectedSlot"
+        (selectedChange)="onSlotChange($event)"
+        (loadError)="mostrarToast('No se pudo consultar la disponibilidad.', true)"
+      />
     </article>
 
     <article class="booking-card">
       <div class="card-header">
-        <h2>3. Completá tus datos</h2>
-        <p>Dejá la información básica para registrar la reserva y poder coordinar los detalles.</p>
+        <h2>3. Contame tu idea</h2>
+        <p>Con estos datos te escribo para coordinar diseño, presupuesto y seña.</p>
       </div>
 
       <form class="booking-form" (ngSubmit)="enviarTurno()">
@@ -101,6 +69,7 @@
             [(ngModel)]="turno.nombre"
             placeholder="Tu nombre"
             autocomplete="name"
+            maxlength="100"
             required
           />
         </div>
@@ -122,15 +91,38 @@
         </div>
 
         <div class="field-block">
-          <label for="telefono">Teléfono</label>
+          <label for="telefono">WhatsApp / teléfono</label>
           <input
             id="telefono"
             type="tel"
             name="telefono"
             autocomplete="tel"
+            maxlength="40"
             [(ngModel)]="turno.telefono"
-            placeholder="Opcional"
+            placeholder="Opcional, ej. 249 4123456"
           />
+        </div>
+
+        <div class="field-row">
+          <div class="field-block">
+            <label for="zona">Zona del cuerpo</label>
+            <select id="zona" name="zona" [(ngModel)]="turno.zona">
+              <option value="">Elegí una zona</option>
+              @for (zone of bodyZones; track zone) {
+                <option [value]="zone">{{ zone }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="field-block">
+            <label for="tamano">Tamaño aproximado</label>
+            <select id="tamano" name="tamano" [(ngModel)]="turno.tamano">
+              <option value="">Elegí un tamaño</option>
+              @for (size of sizes; track size) {
+                <option [value]="size">{{ size }}</option>
+              }
+            </select>
+          </div>
         </div>
 
         <div class="field-block">
@@ -139,33 +131,66 @@
             id="descripcion"
             name="descripcion"
             rows="4"
+            maxlength="2000"
             [(ngModel)]="turno.descripcion"
-            placeholder="Contame un poco la idea del tatuaje"
+            placeholder="Contame la idea: estilo, elementos, si es un diseño propio o una referencia…"
           ></textarea>
         </div>
 
+        <div class="field-block">
+          <span class="field-label">Fotos de referencia <small>(opcional, hasta {{ maxReferences }})</small></span>
+
+          @if (references.length > 0) {
+            <ul class="ref-list">
+              @for (ref of references; track ref.previewUrl; let i = $index) {
+                <li class="ref-item">
+                  <img [src]="ref.previewUrl" [alt]="'Referencia ' + (i + 1)" />
+                  <button
+                    type="button"
+                    class="ref-remove"
+                    (click)="removeReference(i)"
+                    [attr.aria-label]="'Quitar referencia ' + (i + 1)"
+                  >
+                    ×
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+
+          @if (references.length < maxReferences) {
+            <label class="ref-upload" [class.ref-upload--busy]="isProcessingImages">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                (change)="onReferencesSelected($event)"
+                [disabled]="isProcessingImages"
+              />
+              {{ isProcessingImages ? 'Procesando fotos…' : '+ Agregar fotos' }}
+            </label>
+          }
+          <small class="field-hint">Diseños que te gusten, la zona del cuerpo, un boceto propio…</small>
+        </div>
+
         <div class="summary-box">
-          <h3>Resumen de la reserva</h3>
+          <h3>Resumen de tu solicitud</h3>
 
           <div class="summary-row">
             <span>Fecha y horario</span>
             <strong>
-              {{
-                selectedSlot ? formatDisplayDateTime(selectedSlot.start) : 'Sin seleccionar'
-              }}
+              {{ selectedSlot ? formatDisplayDateTime(selectedSlot.start) : 'Sin seleccionar' }}
             </strong>
           </div>
 
           <div class="summary-row">
             <span>Duración</span>
-            <strong>{{ turno.duracionMinutos / 60 }} h</strong>
+            <strong>{{ formatDuration(turno.duracionMinutos) }}</strong>
           </div>
 
           <div class="summary-row">
             <span>Estado</span>
-            <strong>
-              {{ selectedSlot ? 'Listo para solicitar' : 'Elegí un horario' }}
-            </strong>
+            <strong>{{ selectedSlot ? 'Listo para enviar' : 'Elegí un horario' }}</strong>
           </div>
         </div>
 
@@ -176,42 +201,49 @@
     </article>
   </div>
 
-  @if (successBooking) {
+  @if (submitted) {
     <article class="success-card">
       <p class="success-pill">Solicitud enviada</p>
-      <h2>Tu solicitud quedó registrada</h2>
+      <h2>Recibimos tu solicitud de turno</h2>
 
       <div class="success-grid">
         <div>
           <span>Cliente</span>
-          <strong>{{ successBooking.clientName }}</strong>
+          <strong>{{ submitted.clientName }}</strong>
         </div>
 
         <div>
           <span>Email</span>
-          <strong>{{ successBooking.clientEmail }}</strong>
+          <strong>{{ submitted.clientEmail }}</strong>
         </div>
 
         <div>
           <span>Fecha y hora</span>
-          <strong>{{ formatDisplayDateTime(successBooking.startLocal) }}</strong>
+          <strong>{{ formatDisplayDateTime(submitted.startLocal) }}</strong>
         </div>
 
         <div>
           <span>Duración</span>
-          <strong>{{ successBooking.durationMinutes / 60 }} h</strong>
+          <strong>{{ formatDuration(submitted.durationMinutes) }}</strong>
         </div>
       </div>
 
       <div class="success-message">
-        <strong>Solicitud recibida.</strong>
+        <strong>El horario queda reservado para vos.</strong>
         <p>
-          Tu solicitud quedó registrada. Te voy a contactar para confirmar diseño, zona,
-          presupuesto, seña y detalles finales del turno.
+          Te voy a escribir para confirmar diseño, zona, presupuesto y seña. El turno queda
+          confirmado cuando cerramos esos detalles. Te mandamos un mail con el resumen.
         </p>
       </div>
 
       <div class="calendar-actions">
+        <a
+          class="manage-btn"
+          routerLink="/turnos/gestionar"
+          [queryParams]="{ id: submitted.manageId, token: submitted.manageToken }"
+        >
+          Gestionar mi turno
+        </a>
         <a
           [href]="getGoogleCalendarUrl()"
           target="_blank"
@@ -228,6 +260,7 @@
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
+            aria-hidden="true"
           >
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
             <line x1="16" y1="2" x2="16" y2="6"></line>

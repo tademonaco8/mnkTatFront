@@ -1,63 +1,60 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, DestroyRef, OnInit, inject, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   TurnosService,
   CreateBookingRequest,
   AvailableSlot
 } from '../../shared/services/turnos.service';
+import { SlotPickerComponent } from '../../shared/components/slot-picker/slot-picker.component';
+import { ResizedImage, resizeImage } from '../../shared/utils/image-resize';
+import { formatDisplayDateTime, formatDuration, tomorrowIso } from '../../shared/utils/dates';
+import { apiErrorMessage } from '../../shared/utils/api-error';
 
-interface BookingConfirmation {
+interface SubmittedRequest {
   clientName: string;
   clientEmail: string;
   startLocal: string;
   durationMinutes: number;
-  notes?: string | null;
+  manageId: string;
+  manageToken: string;
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-/** Después de este tiempo cargando, avisamos que el servidor puede estar "despertando" (Render free). */
-const SLOW_LOADING_MS = 4000;
+const MAX_REFERENCES = 3;
+const STUDIO_TIME_ZONE = 'America/Argentina/Buenos_Aires';
 
 @Component({
   selector: 'app-turnos',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink, SlotPickerComponent],
   templateUrl: './turnos.component.html',
   styleUrls: ['./turnos.component.css']
 })
 export class TurnosComponent implements OnInit {
   private readonly turnosService = inject(TurnosService);
-
-  private availabilitySub?: Subscription;
+  private readonly slotPicker = viewChild(SlotPickerComponent);
   private toastTimer?: ReturnType<typeof setTimeout>;
-  private slowLoadingTimer?: ReturnType<typeof setTimeout>;
 
-  turno = {
-    nombre: '',
-    email: '',
-    telefono: '',
-    descripcion: '',
-    duracionMinutos: 120
-  };
+  turno = this.emptyForm();
 
   selectedDate = '';
-  availableSlots: AvailableSlot[] = [];
-  availabilityError = false;
   selectedSlot: AvailableSlot | null = null;
+  minDate = '';
+
+  references: ResizedImage[] = [];
+  isProcessingImages = false;
 
   toastMessage = '';
   showToast = false;
   isErrorToast = false;
-
-  isLoadingAvailability = false;
-  isSlowLoading = false;
   isSubmitting = false;
 
-  minDate = '';
+  submitted: SubmittedRequest | null = null;
 
-  successBooking: BookingConfirmation | null = null;
+  readonly maxReferences = MAX_REFERENCES;
+  readonly formatDisplayDateTime = formatDisplayDateTime;
+  readonly formatDuration = formatDuration;
 
   readonly durationOptions = [
     { label: '1 hora', value: 60 },
@@ -65,67 +62,68 @@ export class TurnosComponent implements OnInit {
     { label: '3 horas', value: 180 }
   ];
 
+  readonly bodyZones = [
+    'Antebrazo',
+    'Brazo',
+    'Hombro',
+    'Mano / dedos',
+    'Pierna',
+    'Pantorrilla',
+    'Tobillo / pie',
+    'Espalda',
+    'Pecho',
+    'Costillas',
+    'Abdomen',
+    'Cuello / nuca',
+    'Otra / no sé todavía'
+  ];
+
+  readonly sizes = [
+    'Chico (hasta 5 cm)',
+    'Mediano (5–15 cm)',
+    'Grande (15–25 cm)',
+    'Muy grande (más de 25 cm)',
+    'No sé, lo vemos juntos'
+  ];
+
   constructor() {
-    inject(DestroyRef).onDestroy(() => {
-      this.availabilitySub?.unsubscribe();
-      clearTimeout(this.toastTimer);
-      clearTimeout(this.slowLoadingTimer);
-    });
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.toastTimer));
   }
 
   ngOnInit(): void {
-    this.minDate = this.getTomorrowDate();
+    this.minDate = tomorrowIso();
     this.selectedDate = this.minDate;
-    this.loadAvailability();
   }
 
-  onDateChange(): void {
-    this.selectedSlot = null;
-    this.successBooking = null;
-    this.loadAvailability();
+  onSlotChange(slot: AvailableSlot | null): void {
+    this.selectedSlot = slot;
+    if (slot) this.submitted = null;
   }
 
-  onDurationChange(): void {
-    this.selectedSlot = null;
-    this.successBooking = null;
-    this.loadAvailability();
-  }
+  async onReferencesSelected(event: Event): Promise<void> {
+    const inputEl = event.target as HTMLInputElement;
+    const files = Array.from(inputEl.files ?? []);
+    inputEl.value = ''; // permite volver a elegir el mismo archivo
 
-  loadAvailability(): void {
-    if (!this.selectedDate) {
-      this.availableSlots = [];
-      return;
+    const room = MAX_REFERENCES - this.references.length;
+    if (files.length > room) {
+      this.mostrarToast(`Podés adjuntar hasta ${MAX_REFERENCES} fotos.`, true);
     }
 
-    // Si el usuario cambia de fecha rápido, cancelamos la consulta anterior
-    // para que una respuesta vieja no pise a la nueva.
-    this.availabilitySub?.unsubscribe();
-    this.setLoadingAvailability(true);
-
-    this.availabilityError = false;
-
-    this.availabilitySub = this.turnosService
-      .obtenerHorarios(this.selectedDate, this.turno.duracionMinutos)
-      .subscribe({
-        next: (res) => {
-          // Los horarios vienen del backend (appsettings.json → Schedule).
-          this.availableSlots = res.slots ?? [];
-          this.setLoadingAvailability(false);
-        },
-        error: () => {
-          this.availableSlots = [];
-          this.availabilityError = true;
-          this.setLoadingAvailability(false);
-          this.mostrarToast('No se pudo consultar la disponibilidad.', true);
-        }
-      });
+    this.isProcessingImages = true;
+    try {
+      for (const file of files.slice(0, Math.max(room, 0))) {
+        this.references = [...this.references, await resizeImage(file)];
+      }
+    } catch {
+      this.mostrarToast('No se pudo leer una de las fotos. Probá con otra (JPG o PNG).', true);
+    } finally {
+      this.isProcessingImages = false;
+    }
   }
 
-  selectSlot(slot: AvailableSlot): void {
-    if (!slot.available) return;
-
-    this.selectedSlot = slot;
-    this.successBooking = null;
+  removeReference(index: number): void {
+    this.references = this.references.filter((_, i) => i !== index);
   }
 
   enviarTurno(): void {
@@ -150,7 +148,14 @@ export class TurnosComponent implements OnInit {
       phone: this.turno.telefono?.trim() || null,
       startLocal: this.selectedSlot.start,
       durationMinutes: this.turno.duracionMinutos,
-      notes: this.turno.descripcion?.trim() || null
+      notes: this.turno.descripcion?.trim() || null,
+      bodyZone: this.turno.zona || null,
+      size: this.turno.tamano || null,
+      references: this.references.map(({ fileName, contentType, dataBase64 }) => ({
+        fileName,
+        contentType,
+        dataBase64
+      }))
     };
 
     this.isSubmitting = true;
@@ -159,34 +164,30 @@ export class TurnosComponent implements OnInit {
       next: (res) => {
         this.isSubmitting = false;
 
-        this.successBooking = {
+        const manage = new URL(res.manageUrl);
+        this.submitted = {
           clientName: payload.clientName,
           clientEmail: payload.clientEmail,
           startLocal: payload.startLocal,
           durationMinutes: payload.durationMinutes,
-          notes: payload.notes
+          manageId: manage.searchParams.get('id') ?? res.eventId,
+          manageToken: manage.searchParams.get('token') ?? ''
         };
 
-        this.turno = {
-          nombre: '',
-          email: '',
-          telefono: '',
-          descripcion: '',
-          duracionMinutos: 120
-        };
-
+        this.turno = this.emptyForm();
+        this.references = [];
         this.selectedSlot = null;
-        this.loadAvailability();
-        this.mostrarToast('Solicitud registrada correctamente.');
+        this.slotPicker()?.reload();
+        this.mostrarToast('Solicitud enviada. Te llega un mail con los detalles.');
       },
       error: (err) => {
         this.isSubmitting = false;
-        this.mostrarToast(this.getErrorMessage(err), true);
+        this.mostrarToast(apiErrorMessage(err, 'No se pudo enviar la solicitud.'), true);
 
         // Si el horario se ocupó mientras tanto, refrescamos la lista.
         if (err?.status === 409) {
           this.selectedSlot = null;
-          this.loadAvailability();
+          this.slotPicker()?.reload();
         }
       }
     });
@@ -197,45 +198,59 @@ export class TurnosComponent implements OnInit {
   }
 
   get canSubmit(): boolean {
-    return !!this.turno.nombre.trim() && this.isEmailValid && !!this.selectedSlot && !this.isSubmitting;
+    return (
+      !!this.turno.nombre.trim() &&
+      this.isEmailValid &&
+      !!this.selectedSlot &&
+      !this.isSubmitting &&
+      !this.isProcessingImages
+    );
   }
 
-  /** "2026-10-17T15:00:00" → "15:00" */
-  formatHour(value: string): string {
-    return value.slice(11, 16);
+  /** Link para agendar la solicitud en el Google Calendar del cliente (en hora de Argentina). */
+  getGoogleCalendarUrl(): string {
+    if (!this.submitted) return '';
+
+    const start = this.submitted.startLocal;
+    const end = this.addMinutes(start, this.submitted.durationMinutes);
+    const compact = (v: string) => v.replace(/[-:]/g, '');
+
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: 'Turno de tatuaje (a confirmar) – Mnk Ink',
+      dates: `${compact(start)}/${compact(end)}`,
+      ctz: STUDIO_TIME_ZONE,
+      details:
+        `Solicitud de turno en Mnk Ink. Se confirma al coordinar diseño, presupuesto y seña.\n` +
+        `Duración estimada: ${formatDuration(this.submitted.durationMinutes)}.`,
+      location: 'Mnk Ink, Tandil'
+    });
+
+    return `https://calendar.google.com/calendar/render?${params.toString()}`;
   }
 
-  formatDisplayDateTime(value: string): string {
-    const date = new Date(value);
-    return new Intl.DateTimeFormat('es-AR', {
-      dateStyle: 'full',
-      timeStyle: 'short'
-    }).format(date);
+  private addMinutes(localIso: string, minutes: number): string {
+    // Sumamos sobre la hora "de pared" (sin zona) para no depender del huso del navegador.
+    const [date, time] = localIso.split('T');
+    const [y, m, d] = date.split('-').map(Number);
+    const [hh, mm] = time.split(':').map(Number);
+    const t = new Date(Date.UTC(y, m - 1, d, hh, mm + minutes));
+    return t.toISOString().slice(0, 19);
   }
 
-  private pad(value: number): string {
-    return value.toString().padStart(2, '0');
+  private emptyForm() {
+    return {
+      nombre: '',
+      email: '',
+      telefono: '',
+      descripcion: '',
+      zona: '',
+      tamano: '',
+      duracionMinutos: 120
+    };
   }
 
-  private getTomorrowDate(): string {
-    const today = new Date();
-    today.setDate(today.getDate() + 1);
-
-    const year = today.getFullYear();
-    const month = this.pad(today.getMonth() + 1);
-    const day = this.pad(today.getDate());
-
-    return `${year}-${month}-${day}`;
-  }
-
-  /** Toma el mensaje que manda el backend (error simple o de validación). */
-  private getErrorMessage(err: any): string {
-    const validation = err?.error?.errors as Record<string, string[]> | undefined;
-    const firstValidation = validation ? Object.values(validation).flat()[0] : undefined;
-    return err?.error?.message || firstValidation || 'No se pudo crear el turno.';
-  }
-
-  private mostrarToast(mensaje: string, error: boolean = false): void {
+  mostrarToast(mensaje: string, error = false): void {
     this.toastMessage = mensaje;
     this.isErrorToast = error;
     this.showToast = true;
@@ -244,39 +259,6 @@ export class TurnosComponent implements OnInit {
     clearTimeout(this.toastTimer);
     this.toastTimer = setTimeout(() => {
       this.showToast = false;
-    }, 3000);
-  }
-
-  private setLoadingAvailability(loading: boolean): void {
-    this.isLoadingAvailability = loading;
-    this.isSlowLoading = false;
-    clearTimeout(this.slowLoadingTimer);
-
-    if (loading) {
-      this.slowLoadingTimer = setTimeout(() => {
-        this.isSlowLoading = true;
-      }, SLOW_LOADING_MS);
-    }
-  }
-
-  getGoogleCalendarUrl(): string {
-    if (!this.successBooking) return '';
-
-    const title = encodeURIComponent('Turno Tatuaje - Mnk Ink');
-    const details = encodeURIComponent(
-      `Turno agendado en Mnk Ink.\nDuración estimada: ${this.successBooking.durationMinutes / 60} h.\nRecordá venir bien descansado/a y comido/a.`
-    );
-
-    const startDate = new Date(this.successBooking.startLocal);
-    const endDate = new Date(startDate.getTime() + this.successBooking.durationMinutes * 60000);
-
-    const formatGCalDate = (date: Date) => {
-      return date.toISOString().replace(/-|:|\.\d\d\d/g, '');
-    };
-
-    const startStr = formatGCalDate(startDate);
-    const endStr = formatGCalDate(endDate);
-
-    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startStr}/${endStr}&details=${details}&location=Mnk+Ink+Studio`;
+    }, 4000);
   }
 }

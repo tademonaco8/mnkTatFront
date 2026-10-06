@@ -1,0 +1,53 @@
+<section class="care-page">
+  <header class="care-hero">
+    <p class="eyebrow">Antes y después de tatuarte</p>
+    <h1>Cuidados y preguntas frecuentes</h1>
+    <p class="lead">
+      Todo lo que conviene saber para llegar bien a la sesión y para que tu tatuaje cicatrice
+      lindo y dure.
+    </p>
+  </header>
+
+  <div class="care-grid">
+    <article class="care-card">
+      <h2>Antes de la sesión</h2>
+      <ul>
+        @for (item of before; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    </article>
+
+    <article class="care-card">
+      <h2>Cuidados después</h2>
+      <ul>
+        @for (item of after; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+      <p class="note">
+        Si notás enrojecimiento que se extiende, mucho dolor, pus o fiebre, consultá a un médico.
+      </p>
+    </article>
+  </div>
+
+  <section class="faq">
+    <h2>Preguntas frecuentes</h2>
+    @for (faq of faqs; track faq.q) {
+      <details class="faq-item">
+        <summary>{{ faq.q }}</summary>
+        <p>{{ faq.a }}</p>
+      </details>
+    }
+  </section>
+
+  <section class="care-cta">
+    <h2>¿Te quedó alguna duda?</h2>
+    <div class="actions">
+      <a class="btn btn-primary" routerLink="/turnos">Solicitar turno</a>
+      <a class="btn btn-ghost" [href]="whatsapp" target="_blank" rel="noopener noreferrer">
+        Consultar por WhatsApp
+      </a>
+    </div>
+  </section>
+</section>

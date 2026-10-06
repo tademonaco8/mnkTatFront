@@ -1,0 +1,129 @@
+<section class="manage-page">
+  <div class="manage-card">
+    <p class="eyebrow">MNK Tattoo · Tu turno</p>
+
+    @switch (state()) {
+      @case ('loading') {
+        <h1>Buscando tu turno…</h1>
+        <p class="muted">Si es la primera consulta del día puede tardar hasta un minuto.</p>
+      }
+
+      @case ('not-found') {
+        <h1>No encontramos ese turno</h1>
+        <p class="muted">
+          Puede que el link esté incompleto o que el turno ya se haya cancelado. Si necesitás
+          ayuda, escribime por WhatsApp.
+        </p>
+        <div class="actions">
+          <a class="btn btn-primary" [href]="whatsapp" target="_blank" rel="noopener noreferrer">
+            Escribir por WhatsApp
+          </a>
+          <a class="btn btn-ghost" routerLink="/turnos">Solicitar un turno</a>
+        </div>
+      }
+
+      @case ('cancelled') {
+        <h1>Tu turno fue cancelado</h1>
+        <p class="muted">El horario quedó liberado. Te mandamos un mail de confirmación.</p>
+        <div class="actions">
+          <a class="btn btn-primary" routerLink="/turnos">Elegir otra fecha</a>
+        </div>
+      }
+
+      @case ('ready') {
+        @if (booking(); as b) {
+          <h1>Hola {{ b.clientName }}</h1>
+
+          <div class="booking-box">
+            <span class="label">Tu solicitud de turno</span>
+            <strong>{{ formatDisplayDateTime(b.start) }}</strong>
+            <span class="muted">Duración estimada: {{ formatDuration(b.durationMinutes) }}</span>
+            @if (b.bodyZone || b.size) {
+              <span class="muted">{{ b.bodyZone }}{{ b.bodyZone && b.size ? ' · ' : '' }}{{ b.size }}</span>
+            }
+          </div>
+
+          @if (message(); as m) {
+            <p class="notice" [class.notice--error]="m.error" role="status">{{ m.text }}</p>
+          }
+
+          @if (!b.canModify) {
+            <p class="muted">
+              Faltan menos de {{ b.modifyLimitHours }} h para tu turno, así que los cambios se
+              coordinan por WhatsApp.
+            </p>
+            <div class="actions">
+              <a class="btn btn-primary" [href]="whatsapp" target="_blank" rel="noopener noreferrer">
+                Escribir por WhatsApp
+              </a>
+            </div>
+          } @else {
+            @switch (mode()) {
+              @case ('view') {
+                <p class="muted">
+                  Podés cancelar o cambiar el horario hasta {{ b.modifyLimitHours }} h antes del turno.
+                </p>
+                <div class="actions">
+                  <button type="button" class="btn btn-primary" (click)="setMode('reschedule')">
+                    Cambiar horario
+                  </button>
+                  <button type="button" class="btn btn-ghost" (click)="setMode('cancel')">
+                    Cancelar turno
+                  </button>
+                </div>
+              }
+
+              @case ('cancel') {
+                <div class="confirm-box">
+                  <strong>¿Seguro que querés cancelar tu turno?</strong>
+                  <p class="muted">El horario se libera y lo puede tomar otra persona.</p>
+                  <div class="actions">
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      (click)="confirmCancel()"
+                      [disabled]="busy()"
+                    >
+                      {{ busy() ? 'Cancelando…' : 'Sí, cancelar turno' }}
+                    </button>
+                    <button type="button" class="btn btn-ghost" (click)="setMode('view')" [disabled]="busy()">
+                      Volver
+                    </button>
+                  </div>
+                </div>
+              }
+
+              @case ('reschedule') {
+                <div class="reschedule">
+                  <label for="new-date">Nueva fecha</label>
+                  <input id="new-date" type="date" name="new-date" [(ngModel)]="newDate" [min]="minDate" />
+
+                  <app-slot-picker
+                    [date]="newDate"
+                    [durationMinutes]="b.durationMinutes"
+                    [currentStart]="b.start"
+                    [(selected)]="newSlot"
+                  />
+
+                  <div class="actions">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      (click)="confirmReschedule()"
+                      [disabled]="!newSlot || busy()"
+                    >
+                      {{ busy() ? 'Guardando…' : 'Confirmar nuevo horario' }}
+                    </button>
+                    <button type="button" class="btn btn-ghost" (click)="setMode('view')" [disabled]="busy()">
+                      Volver
+                    </button>
+                  </div>
+                </div>
+              }
+            }
+          }
+        }
+      }
+    }
+  </div>
+</section>

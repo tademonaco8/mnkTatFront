@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /turnos/gestionar
 
 Sitemap: https://mnkink.netlify.app/sitemap.xml

@@ -17,7 +17,10 @@
 - Communicate with the .NET Backend via Angular's `HttpClient`.
 - Point API calls to the correct environment variable containing the backend URL.
 - Booking times come from the backend (`GET /api/availability/slots`). Never hardcode available hours in the frontend.
-- Do not use `withFetch()` in `provideHttpClient`: with zone.js it caused the view not to refresh after chained requests.
+- zone.js is loaded through `polyfills` in `angular.json` (never `import 'zone.js'` in `main.ts`): that is what lets the build downlevel `async/await` so the view refreshes after an `await`.
+- Do not use `withFetch()` in `provideHttpClient` (it caused stale views with zone.js).
+- Studio contact data lives in `src/app/shared/studio.ts`. The slot list is the shared `SlotPickerComponent` (used by `/turnos` and `/turnos/gestionar`).
+- Wording: the client sends a "solicitud de turno"; the slot is reserved and the turno is "confirmado" only after design, budget and deposit are agreed. Never say "turno confirmado" right after the form.
 
 ## General Practices
 - Use TypeScript strictly.
