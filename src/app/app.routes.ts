@@ -9,13 +9,13 @@ import { FlashComponent } from './features/flash/flash.component';
 import { hasFlash } from './shared/flash';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, title: 'MNK Ink | Tatuajes black & grey, minimal y lettering' },
-  { path: 'gallery', component: GalleryComponent, title: 'Trabajos | MNK Ink' },
+  { path: '', component: HomeComponent, title: 'MNK Tattoo | Tatuajes black & grey, minimal y lettering' },
+  { path: 'gallery', component: GalleryComponent, title: 'Trabajos | MNK Tattoo' },
   // Flash: la ruta solo existe si hay diseños cargados (si no, /flash cae en '**' y va al inicio).
-  { path: 'flash', component: FlashComponent, canMatch: [() => hasFlash()], title: 'Flash | MNK Ink' },
-  { path: 'turnos', component: TurnosComponent, title: 'Solicitar turno | MNK Ink' },
-  { path: 'turnos/gestionar', component: GestionarTurnoComponent, title: 'Gestionar mi turno | MNK Ink' },
-  { path: 'cuidados', component: CuidadosComponent, title: 'Cuidados y preguntas frecuentes | MNK Ink' },
-  { path: 'about', component: AboutComponent, title: 'Sobre mí | MNK Ink' },
+  { path: 'flash', component: FlashComponent, canMatch: [() => hasFlash()], title: 'Flash | MNK Tattoo' },
+  { path: 'turnos', component: TurnosComponent, title: 'Solicitar turno | MNK Tattoo' },
+  { path: 'turnos/gestionar', component: GestionarTurnoComponent, title: 'Gestionar mi turno | MNK Tattoo' },
+  { path: 'cuidados', component: CuidadosComponent, title: 'Cuidados y preguntas frecuentes | MNK Tattoo' },
+  { path: 'about', component: AboutComponent, title: 'Sobre mí | MNK Tattoo' },
   { path: '**', redirectTo: '' }
 ];

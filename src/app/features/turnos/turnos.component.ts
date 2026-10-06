@@ -246,13 +246,13 @@ export class TurnosComponent implements OnInit {
 
     const params = new URLSearchParams({
       action: 'TEMPLATE',
-      text: 'Turno de tatuaje (a confirmar) – MNK Ink',
+      text: 'Turno de tatuaje (a confirmar) – MNK Tattoo',
       dates: `${compact(start)}/${compact(end)}`,
       ctz: STUDIO_TIME_ZONE,
       details:
-        `Solicitud de turno en MNK Ink. Se confirma al coordinar diseño, presupuesto y seña.\n` +
+        `Solicitud de turno en MNK Tattoo. Se confirma al coordinar diseño, presupuesto y seña.\n` +
         `Duración estimada: ${formatDuration(this.submitted.durationMinutes)}.`,
-      location: 'MNK Ink, Tandil'
+      location: 'MNK Tattoo, Tandil'
     });
 
     return `https://calendar.google.com/calendar/render?${params.toString()}`;

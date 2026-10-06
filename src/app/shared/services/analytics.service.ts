@@ -9,7 +9,7 @@ declare global {
 }
 
 /** Dominio donde se cuentan las visitas (así las pruebas en local no ensucian los números). */
-const TRACKED_DOMAIN = 'mnkink.netlify.app';
+const TRACKED_DOMAIN = 'mnktattoo.netlify.app';
 
 /**
  * Estadísticas con Umami Cloud: visitas por página (automático, sin cookies) y

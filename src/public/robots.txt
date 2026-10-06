@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /turnos/gestionar
 
-Sitemap: https://mnkink.netlify.app/sitemap.xml
+Sitemap: https://mnktattoo.netlify.app/sitemap.xml

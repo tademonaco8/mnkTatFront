@@ -7,7 +7,7 @@
 ## Styling
 - Use plain CSS: one stylesheet per component, plus global styles in `src/styles.css` and the base reset in `src/reset.css`. Tailwind is NOT used.
 - Respect `prefers-reduced-motion` for animations.
-- Brand: always write "MNK Ink". Colors and fonts are CSS variables in `src/styles.css` (`--bg`, `--surface`, `--accent`, `--font-display`, `--font-body`); use them instead of new hex values. No blue/navy tones.
+- Brand: always write "MNK Tattoo". Colors and fonts are CSS variables in `src/styles.css` (`--bg`, `--surface`, `--accent`, `--font-display`, `--font-body`); use them instead of new hex values. No blue/navy tones.
 - Fonts are self-hosted with Fontsource (`@fontsource/grenze-gotisch`, `@fontsource-variable/inter`). `h1`/`h2` use the gothic display font; small headings inside cards/forms use `--font-body` (class `.text-heading`).
 - Portfolio images are shown complete (masonry with CSS columns), never cropped. Add new photos to `src/app/shared/image-sizes.ts` with their real width/height.
 - Images go in `src/assets/img` as WebP (max ~1200px wide). Use `<img loading="lazy">` with a meaningful `alt` instead of CSS background images for content.
@@ -30,7 +30,7 @@
 - Format code cleanly, utilizing Angular CLI defaults.
 
 ## Analytics
-- Umami Cloud (no cookies). Website ID goes in `environment.production.ts` → `umamiWebsiteId`; only counts on mnkink.netlify.app.
+- Umami Cloud (no cookies). Website ID goes in `environment.production.ts` → `umamiWebsiteId`; only counts on mnktattoo.netlify.app.
 - Track key actions with `AnalyticsService.track(...)`: `solicitud-enviada`, `galeria-detalle`, `turno-cancelado`, `turno-reprogramado`; WhatsApp/Instagram clicks are tracked automatically.
 
 ## Flash
