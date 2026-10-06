@@ -44,7 +44,7 @@
 /* ---------- Filtros ---------- */
 .gallery-toolbar {
   position: sticky;
-  top: 76px;
+  top: var(--header-h);
   z-index: 5;
   display: flex;
   align-items: center;
@@ -333,10 +333,6 @@
 @media (max-width: 640px) {
   .container {
     width: min(100% - 32px, 1180px);
-  }
-
-  .gallery-toolbar {
-    top: 68px;
   }
 
   .gallery-count {

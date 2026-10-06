@@ -23,7 +23,27 @@
   --font-display: 'Grenze Gotisch', 'UnifrakturMaguntia', Georgia, serif;
   --font-body: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
 
+  /* Alto de la barra superior (la usan la galería y el menú del celular) */
+  --header-h: 76px;
+
   color-scheme: dark;
+}
+
+@media (max-width: 1080px) {
+  :root {
+    --header-h: 64px;
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --header-h: 60px;
+  }
+}
+
+/* Con el menú del celular abierto, el botón flotante de WhatsApp no tapa nada */
+body.menu-open app-whatsapp-button {
+  display: none;
 }
 
 html {

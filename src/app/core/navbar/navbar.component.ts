@@ -4,6 +4,7 @@ import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/ro
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
 import { hasFlash } from '../../shared/flash';
+import { STUDIO, whatsappLink } from '../../shared/studio';
 
 @Component({
   selector: 'app-navbar',
@@ -15,6 +16,9 @@ import { hasFlash } from '../../shared/flash';
 export class NavbarComponent {
   private readonly router = inject(Router);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
+  readonly whatsapp = whatsappLink('Hola! Quiero consultar por un tatuaje.');
+  readonly instagram = STUDIO.instagram;
 
   isMenuOpen = false;
   isScrolled = false;
@@ -62,5 +66,7 @@ export class NavbarComponent {
   private syncBodyScroll(): void {
     if (!this.isBrowser) return;
     document.body.style.overflow = this.isMenuOpen ? 'hidden' : '';
+    // Permite ocultar el botón flotante de WhatsApp mientras el menú está abierto.
+    document.body.classList.toggle('menu-open', this.isMenuOpen);
   }
 }
