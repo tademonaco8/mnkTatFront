@@ -10,6 +10,7 @@ import { SlotPickerComponent } from '../../shared/components/slot-picker/slot-pi
 import { ResizedImage, resizeImage } from '../../shared/utils/image-resize';
 import { formatDisplayDateTime, formatDuration, tomorrowIso } from '../../shared/utils/dates';
 import { apiErrorMessage } from '../../shared/utils/api-error';
+import { AnalyticsService } from '../../shared/services/analytics.service';
 
 interface SubmittedRequest {
   clientName: string;
@@ -33,6 +34,7 @@ const STUDIO_TIME_ZONE = 'America/Argentina/Buenos_Aires';
 })
 export class TurnosComponent implements OnInit {
   private readonly turnosService = inject(TurnosService);
+  private readonly analytics = inject(AnalyticsService);
   private readonly slotPicker = viewChild(SlotPickerComponent);
   private toastTimer?: ReturnType<typeof setTimeout>;
 
@@ -174,6 +176,13 @@ export class TurnosComponent implements OnInit {
           manageToken: manage.searchParams.get('token') ?? ''
         };
 
+        this.analytics.track('solicitud-enviada', {
+          duracion: payload.durationMinutes,
+          zona: payload.bodyZone || 'sin dato',
+          tamano: payload.size || 'sin dato',
+          fotos: payload.references?.length ?? 0
+        });
+
         this.turno = this.emptyForm();
         this.references = [];
         this.selectedSlot = null;
@@ -217,13 +226,13 @@ export class TurnosComponent implements OnInit {
 
     const params = new URLSearchParams({
       action: 'TEMPLATE',
-      text: 'Turno de tatuaje (a confirmar) – Mnk Ink',
+      text: 'Turno de tatuaje (a confirmar) – MNK Ink',
       dates: `${compact(start)}/${compact(end)}`,
       ctz: STUDIO_TIME_ZONE,
       details:
-        `Solicitud de turno en Mnk Ink. Se confirma al coordinar diseño, presupuesto y seña.\n` +
+        `Solicitud de turno en MNK Ink. Se confirma al coordinar diseño, presupuesto y seña.\n` +
         `Duración estimada: ${formatDuration(this.submitted.durationMinutes)}.`,
-      location: 'Mnk Ink, Tandil'
+      location: 'MNK Ink, Tandil'
     });
 
     return `https://calendar.google.com/calendar/render?${params.toString()}`;

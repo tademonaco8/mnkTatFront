@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RevealOnScrollDirective } from '../../shared/directives/reveal-on-scroll.directive';
+import { whatsappLink } from '../../shared/studio';
+import { imageSize } from '../../shared/image-sizes';
 
-interface HighlightItem {
-  title: string;
+interface StyleItem {
+  name: string;
   description: string;
-  badge: string;
 }
 
 interface ProcessStep {
@@ -16,7 +17,6 @@ interface ProcessStep {
 
 interface PreviewWork {
   title: string;
-  subtitle: string;
   image: string;
 }
 
@@ -28,68 +28,44 @@ interface PreviewWork {
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  highlights: HighlightItem[] = [
-    {
-      title: 'Reserva online',
-      description: 'Elegí uno de los horarios habilitados, dejá tus datos y coordinamos los detalles del diseño.',
-      badge: 'Turnos'
-    },
-    {
-      title: 'Diseño personalizado',
-      description: 'Cada proyecto se piensa según la idea, la zona del cuerpo y la energía que querés llevar.',
-      badge: 'Custom'
-    },
-    {
-      title: 'Estética oscura',
-      description: 'Black & grey, dark art, contraste, atmósfera y piezas con identidad.',
-      badge: 'Style'
-    }
+  readonly imageSize = imageSize;
+  readonly whatsapp = whatsappLink('Hola! Quiero consultar por un tatuaje.');
+
+  readonly styles: StyleItem[] = [
+    { name: 'Black & Grey', description: 'Sombras, contraste y profundidad.' },
+    { name: 'Dark Art', description: 'Piezas oscuras, ornamentales y con clima.' },
+    { name: 'Lettering', description: 'Letras y números con línea propia.' }
   ];
 
-  processSteps: ProcessStep[] = [
+  readonly processSteps: ProcessStep[] = [
     {
       step: '01',
       title: 'Idea',
-      description: 'Traés referencia, concepto o emoción. Definimos por dónde empezar.'
+      description: 'Me contás qué querés: una referencia, un concepto o solo una sensación.'
     },
     {
       step: '02',
       title: 'Diseño',
-      description: 'Se trabaja composición, lectura visual, tamaño y adaptación al cuerpo.'
+      description: 'Armo una propuesta pensada para la zona, el tamaño y tu cuerpo.'
     },
     {
       step: '03',
-      title: 'Reserva',
-      description: 'Elegís fecha y horario, y dejás tu solicitud de turno desde la web.'
+      title: 'Turno',
+      description: 'Elegís un horario online. Se confirma al acordar diseño, presupuesto y seña.'
     },
     {
       step: '04',
       title: 'Sesión',
-      description: 'Se ejecuta la pieza buscando presencia, contraste y personalidad.'
+      description: 'Tatuamos sin apuro y te llevás los cuidados para que cicatrice bien.'
     }
   ];
 
-  works: PreviewWork[] = [
-    {
-      title: 'Black & Grey',
-      subtitle: 'Sombras, contraste y profundidad',
-      image: 'assets/img/work-7.webp'
-    },
-    {
-      title: 'Lettering',
-      subtitle: 'Línea suave y orgánica.',
-      image: 'assets/img/work-1.webp'
-    },
-    {
-      title: 'Minimal',
-      subtitle: 'Diseño pensado para shockear con su simplicidad.',
-      image: 'assets/img/work-6.webp'
-    }
-  ];
-
-  bookingPreview = [
-    'Martes · 18:30',
-    'Jueves · 20:00',
-    'Sábado · 12:30'
+  readonly works: PreviewWork[] = [
+    { title: 'Clavos en black & grey', image: 'assets/img/work-3.webp' },
+    { title: 'Rostro fragmentado', image: 'assets/img/work-8.webp' },
+    { title: 'Encendedor “We Burn”', image: 'assets/img/work-4.webp' },
+    { title: 'Lettering con números romanos', image: 'assets/img/work-1.webp' },
+    { title: 'Neo tribal linework', image: 'assets/img/work-2.webp' },
+    { title: 'Querubín minimalista', image: 'assets/img/work-5.webp' }
   ];
 }

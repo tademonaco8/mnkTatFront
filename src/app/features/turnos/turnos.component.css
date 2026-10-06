@@ -63,7 +63,10 @@
 
 .card-header h2 {
   margin: 0 0 6px;
+  font-family: var(--font-body);
   font-size: 1.2rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
 }
 
 .card-header p {

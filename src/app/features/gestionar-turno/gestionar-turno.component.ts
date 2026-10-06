@@ -6,6 +6,7 @@ import { SlotPickerComponent } from '../../shared/components/slot-picker/slot-pi
 import { formatDisplayDateTime, formatDuration, tomorrowIso } from '../../shared/utils/dates';
 import { apiErrorMessage } from '../../shared/utils/api-error';
 import { whatsappLink } from '../../shared/studio';
+import { AnalyticsService } from '../../shared/services/analytics.service';
 
 type Mode = 'view' | 'cancel' | 'reschedule';
 type State = 'loading' | 'ready' | 'not-found' | 'cancelled';
@@ -21,6 +22,7 @@ type State = 'loading' | 'ready' | 'not-found' | 'cancelled';
 export class GestionarTurnoComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly turnosService = inject(TurnosService);
+  private readonly analytics = inject(AnalyticsService);
 
   protected readonly state = signal<State>('loading');
   protected readonly mode = signal<Mode>('view');
@@ -71,6 +73,7 @@ export class GestionarTurnoComponent implements OnInit {
       next: () => {
         this.busy.set(false);
         this.state.set('cancelled');
+        this.analytics.track('turno-cancelado');
       },
       error: (err) => {
         this.busy.set(false);
@@ -87,6 +90,7 @@ export class GestionarTurnoComponent implements OnInit {
       next: (b) => {
         this.busy.set(false);
         this.booking.set(b);
+        this.analytics.track('turno-reprogramado');
         this.mode.set('view');
         this.newSlot = null;
         this.message.set({ text: 'Listo, cambiaste el horario. Te mandamos un mail con el nuevo turno.', error: false });

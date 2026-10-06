@@ -1,186 +1,93 @@
-<section class="home-page">
-  <div class="bg-orb bg-orb--one"></div>
-  <div class="bg-orb bg-orb--two"></div>
-  <div class="grid-overlay"></div>
-
+<section class="home">
+  <!-- Portada -->
   <section class="hero container">
-    <div class="hero-copy hero-fade-up">
-      <p class="eyebrow">MNK Ink · TATTOO EXPERIENCE</p>
-
-      <h1>
-        Tatuajes con identidad.
-        <span>Solicitá online y experiencia cuidada de punta a punta.</span>
-      </h1>
-
-      <p class="hero-text">
-        Un espacio donde el concepto, la estética y la técnica se cruzan. Explorá trabajos, entendé
-        el proceso y solicitá tu turno desde una agenda online.
+    <div class="hero__copy">
+      <p class="kicker hero-fade-up">Tattoo studio · Tandil</p>
+      <h1 class="hero-fade-up delay-1">Tatuajes oscuros, con identidad propia</h1>
+      <p class="hero__text hero-fade-up delay-2">
+        Black &amp; grey, dark art y lettering. Diseños propios pensados para tu idea y para tu
+        cuerpo.
       </p>
 
-      <div class="hero-actions hero-fade-up delay-1">
+      <div class="hero__actions hero-fade-up delay-3">
         <a routerLink="/turnos" class="btn btn-primary">Solicitar turno</a>
-        <a routerLink="/gallery" class="btn btn-secondary">Ver trabajos</a>
+        <a routerLink="/gallery" class="btn btn-ghost">Ver trabajos</a>
       </div>
 
-      <div class="hero-microdata hero-fade-up delay-2">
-        <div class="micro-item">
-          <strong>Black & Grey</strong>
-          <span>Sombras, contraste y presencia</span>
-        </div>
-        <div class="micro-item">
-          <strong>Dark Art</strong>
-          <span>Estética oscura y piezas con clima</span>
-        </div>
-        <div class="micro-item">
-          <strong>Custom</strong>
-          <span>Diseños pensados para cada cuerpo</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="hero-panel">
-      <div class="floating-card booking-card">
-        <div class="floating-card__header">
-          <div>
-            <p class="floating-label">Sistema de turnos</p>
-            <h3>Turnos con reserva previa</h3>
-          </div>
-          <span class="status-pill">Agenda</span>
-        </div>
-
-        <div class="booking-list">
-          @for (item of bookingPreview; track item) {
-            <div class="booking-item">
-              <span class="booking-dot"></span>
-              <span>{{ item }}</span>
-            </div>
-          }
-        </div>
-
-        <div class="booking-footer">
-          <div>
-            <small>Consulta previa</small>
-            <strong>Incluida</strong>
-          </div>
-          <div>
-            <small>Reserva</small>
-            <strong>Online</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="floating-card concept-card">
-        <p class="concept-card__tag">Proceso custom</p>
-        <h3>Idea → Diseño → Reserva → Sesión</h3>
-        <p>
-          Cada pieza se piensa desde la idea, la zona del cuerpo y la estética que querés llevar.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section class="highlights container">
-    <div class="section-heading">
-      <p class="section-kicker">Enfoque</p>
-      <h2>Una forma simple de conocer el estilo y reservar</h2>
-      <p>Explorá trabajos, entendé el proceso y dejá tu consulta sin vueltas.</p>
-    </div>
-
-    <div class="highlight-grid">
-      @for (item of highlights; track item.title) {
-        <article class="highlight-card float-hover" appRevealOnScroll>
-          <span class="highlight-badge">{{ item.badge }}</span>
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.description }}</p>
-        </article>
-      }
-    </div>
-  </section>
-
-  <section class="showcase container">
-    <div class="showcase-copy">
-      <p class="section-kicker">Estética</p>
-      <h2>Oscuridad, contraste y una presencia que no se diluye</h2>
-      <p>
-        La dirección visual del proyecto combina fondos profundos, acentos cálidos y superficies
-        translúcidas para que la marca se sienta contemporánea, intensa y clara.
+      <p class="hero__note hero-fade-up delay-3">
+        ¿Dudas? <a [href]="whatsapp" target="_blank" rel="noopener noreferrer">Escribime por WhatsApp</a>
       </p>
-
-      <div class="showcase-tags">
-        <span>Black & Grey</span>
-        <span>Dark Art</span>
-        <span>Custom Design</span>
-      </div>
     </div>
 
-    <div class="showcase-visual">
-      <div class="visual-frame visual-frame--large">
-        <div class="visual-glow"></div>
-        <div class="visual-content">
-          <p>Experiencia</p>
-          <strong>Trabajos + proceso + reserva online</strong>
-        </div>
-      </div>
-      <div class="visual-frame visual-frame--small">
-        <div class="visual-content">
-          <p>Diseño</p>
-          <strong>Capas, brillo y profundidad</strong>
-        </div>
-      </div>
+    <div class="hero__media" aria-hidden="true">
+      <figure class="hero__photo hero__photo--main">
+        <img src="assets/img/work-7.webp" alt="" fetchpriority="high" decoding="async" />
+      </figure>
+      <figure class="hero__photo hero__photo--side">
+        <img src="assets/img/work-9.webp" alt="" decoding="async" />
+      </figure>
     </div>
   </section>
 
-  <section class="process container">
-    <div class="section-heading">
-      <p class="section-kicker">Proceso</p>
-      <h2>Cómo se transforma una idea en una pieza</h2>
-    </div>
-
-    <div class="process-grid">
-      @for (step of processSteps; track step.step) {
-        <article class="process-card float-hover" appRevealOnScroll>
-          <span class="process-number">{{ step.step }}</span>
-          <h3>{{ step.title }}</h3>
-          <p>{{ step.description }}</p>
-        </article>
-      }
-    </div>
+  <!-- Estilos -->
+  <section class="styles container" appRevealOnScroll>
+    @for (style of styles; track style.name) {
+      <div class="styles__item">
+        <h2 class="styles__name">{{ style.name }}</h2>
+        <p>{{ style.description }}</p>
+      </div>
+    }
   </section>
 
+  <!-- Trabajos -->
   <section class="works container">
-    <div class="section-heading">
-      <p class="section-kicker">Preview</p>
-      <h2>Trabajos destacados</h2>
+    <div class="section-head">
+      <h2>Trabajos</h2>
+      <a routerLink="/gallery" class="link-arrow">Ver la galería completa →</a>
     </div>
 
-    <div class="works-grid">
-      @for (work of works; track work.title) {
-        <article class="work-card float-hover" appRevealOnScroll>
-          <div class="work-image">
-            <img [src]="work.image" [alt]="work.title" loading="lazy" decoding="async" />
-          </div>
-          <div class="work-content">
-            <h3>{{ work.title }}</h3>
-            <p>{{ work.subtitle }}</p>
-          </div>
-        </article>
+    <div class="masonry">
+      @for (work of works; track work.image) {
+        <a routerLink="/gallery" class="masonry__item" appRevealOnScroll>
+          <img
+            [src]="work.image"
+            [alt]="work.title"
+            [attr.width]="imageSize(work.image).width"
+            [attr.height]="imageSize(work.image).height"
+            loading="lazy"
+            decoding="async"
+          />
+        </a>
       }
-    </div>
-
-    <div class="works-action">
-      <a routerLink="/gallery" class="btn btn-secondary">Explorar galería completa</a>
     </div>
   </section>
 
-  <section class="cta container">
-    <div class="cta-card">
-      <div>
-        <p class="section-kicker">Solicitud</p>
-        <h2>¿Tenés una idea?</h2>
-        <p>Elegí fecha, revisá horarios disponibles y solicita tu turno desde la web.</p>
-      </div>
+  <!-- Proceso -->
+  <section class="process container">
+    <div class="section-head">
+      <h2>Cómo trabajamos</h2>
+    </div>
 
-      <a routerLink="/turnos" class="btn btn-primary">Ir a la agenda</a>
+    <ol class="process__list">
+      @for (step of processSteps; track step.step) {
+        <li class="process__step" appRevealOnScroll>
+          <span class="process__number">{{ step.step }}</span>
+          <h3 class="text-heading">{{ step.title }}</h3>
+          <p>{{ step.description }}</p>
+        </li>
+      }
+    </ol>
+  </section>
+
+  <!-- Llamado final -->
+  <section class="cta container" appRevealOnScroll>
+    <h2>¿Tenés una idea?</h2>
+    <p>Elegí un horario disponible y contame qué querés tatuarte.</p>
+    <div class="cta__actions">
+      <a routerLink="/turnos" class="btn btn-primary">Solicitar turno</a>
+      <a [href]="whatsapp" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+        Consultar por WhatsApp
+      </a>
     </div>
   </section>
 </section>

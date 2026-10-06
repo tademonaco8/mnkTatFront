@@ -1,6 +1,6 @@
 /** Datos de contacto del estudio, en un solo lugar. */
 export const STUDIO = {
-  name: 'Mnk Ink',
+  name: 'MNK Ink',
   whatsapp: '542494209376',
   instagram: 'https://instagram.com/mnk.tat',
   email: 'tademonaco8@gmail.com'

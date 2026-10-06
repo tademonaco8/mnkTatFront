@@ -2,6 +2,69 @@
 
 @import './reset.css';
 
+/* Fuentes servidas desde el propio sitio (paquetes Fontsource) */
+@import '@fontsource/grenze-gotisch/500.css';
+@import '@fontsource/grenze-gotisch/600.css';
+@import '@fontsource/grenze-gotisch/700.css';
+@import '@fontsource-variable/inter/wght.css';
+
+/* Paleta y tipografía de la marca: usar estas variables en los componentes */
+:root {
+  --bg: #0c0c0e;
+  --bg-elevated: #121215;
+  --surface: #17171b;
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #f2f2f4;
+  --text-muted: #a3a3ad;
+  --accent: #b63131;
+  --accent-strong: #d14a4a;
+  --accent-soft: #e58a8a;
+
+  --font-display: 'Grenze Gotisch', 'UnifrakturMaguntia', Georgia, serif;
+  --font-body: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  color-scheme: dark;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Títulos grandes con la letra gótica del logo; el resto queda en Inter para que se lea bien */
+h1,
+.display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.02;
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.08;
+}
+
+/* Títulos chicos dentro de tarjetas o formularios: sans */
+.text-heading {
+  font-family: var(--font-body);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: rgba(182, 49, 49, 0.55);
+  color: #fff;
+}
+
 
 html {
   scroll-behavior: smooth;

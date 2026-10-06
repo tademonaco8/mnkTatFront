@@ -1,5 +1,8 @@
 import { Component, ElementRef, HostListener, OnDestroy, PLATFORM_ID, inject, viewChild } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { imageSize } from '../../shared/image-sizes';
+import { AnalyticsService } from '../../shared/services/analytics.service';
 
 type WorkCategory = 'all' | 'black-grey' | 'minimal' | 'lettering' | 'neotribal' | 'dark';
 
@@ -17,14 +20,16 @@ interface GalleryItem {
 @Component({
   selector: 'app-gallery',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './gallery.component.html',
   styleUrls: ['./gallery.component.css']
 })
 export class GalleryComponent implements OnDestroy {
+  readonly imageSize = imageSize;
   activeFilter: WorkCategory = 'all';
   selectedWork: GalleryItem | null = null;
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly analytics = inject(AnalyticsService);
   private readonly closeButton = viewChild<ElementRef<HTMLButtonElement>>('closeButton');
   private lastFocused: HTMLElement | null = null;
 
@@ -154,6 +159,7 @@ export class GalleryComponent implements OnDestroy {
 
   openWork(work: GalleryItem): void {
     this.selectedWork = work;
+    this.analytics.track('galeria-detalle', { trabajo: work.title });
 
     if (this.isBrowser) {
       this.lastFocused = document.activeElement as HTMLElement | null;

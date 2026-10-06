@@ -1,76 +1,60 @@
 <section class="gallery-page">
-  <div class="gallery-orb gallery-orb--one"></div>
-  <div class="gallery-orb gallery-orb--two"></div>
-
-  <section class="gallery-hero container">
-    <p class="section-kicker">Trabajos realizados</p>
-    <h1>Tatuajes con presencia, contraste y concepto</h1>
+  <header class="gallery-hero container">
+    <p class="kicker">Trabajos realizados</p>
+    <h1>Trabajos</h1>
     <p class="gallery-description">
-      Una selección pensada para mostrar estilo, proceso y criterio visual. Cada pieza busca
-      sostener una identidad clara, tanto de cerca como a distancia.
+      Black &amp; grey, dark art, lettering y piezas minimalistas. Tocá una foto para ver el detalle.
     </p>
-  </section>
+  </header>
 
-  <section class="gallery-toolbar container">
+  <nav class="gallery-toolbar container" aria-label="Filtrar trabajos por estilo">
     <div class="filter-group">
       @for (filter of filters; track filter.value) {
         <button
           type="button"
           class="filter-chip"
           [class.filter-chip--active]="activeFilter === filter.value"
+          [attr.aria-pressed]="activeFilter === filter.value"
           (click)="setFilter(filter.value)"
         >
           {{ filter.label }}
         </button>
       }
     </div>
+    <span class="gallery-count">{{ filteredWorks.length }} trabajos</span>
+  </nav>
 
-    <div class="gallery-stats">
-      <span>{{ filteredWorks.length }} piezas visibles</span>
-    </div>
-  </section>
-
-  <section class="gallery-grid container">
+  <section class="masonry container">
     @for (work of filteredWorks; track work.id) {
-      <article class="gallery-card" [class.gallery-card--featured]="work.featured">
-        <button
-          type="button"
-          class="gallery-card__open"
-          (click)="openWork(work)"
-          [attr.aria-label]="'Ver detalle: ' + work.title"
-        ></button>
-        <div class="gallery-card__image">
-          <img [src]="work.image" [alt]="work.title" loading="lazy" decoding="async" />
-        </div>
-        <div class="gallery-card__content">
-          <div class="gallery-card__topline">
-            <span class="gallery-card__category">{{ formatCategories(work.category) }}</span>
-            @if (work.featured) {
-              <span class="gallery-card__featured">Destacado</span>
-            }
-          </div>
-          <h2>{{ work.title }}</h2>
-          <p class="gallery-card__subtitle">{{ work.subtitle }}</p>
-          <p class="gallery-card__description">{{ work.description }}</p>
-          <div class="gallery-card__tags">
-            @for (tag of work.tags; track tag) {
-              <span>{{ tag }}</span>
-            }
-          </div>
-        </div>
-      </article>
+      <button
+        type="button"
+        class="tile"
+        (click)="openWork(work)"
+        [attr.aria-label]="'Ver detalle: ' + work.title"
+      >
+        <img
+          [src]="work.image"
+          [alt]="work.title"
+          [attr.width]="imageSize(work.image).width"
+          [attr.height]="imageSize(work.image).height"
+          loading="lazy"
+          decoding="async"
+        />
+        <span class="tile__info">
+          <span class="tile__category">{{ formatCategories(work.category) }}</span>
+          <span class="tile__title">{{ work.title }}</span>
+        </span>
+      </button>
     }
   </section>
 
   <section class="gallery-note container">
-    <div class="gallery-note__card">
-      <p class="section-kicker">Diseños personalizados</p>
-      <h2>¿Querés una pieza con esta línea estética?</h2>
-      <p>
-        Podés tomar estos trabajos como referencia y contarme tu idea para armar una propuesta
-        propia, adaptada a la zona, tamaño y estilo que buscás.
-      </p>
-    </div>
+    <h2>¿Querés algo en esta línea?</h2>
+    <p>
+      Tomá estos trabajos como referencia y contame tu idea: armo una propuesta propia, adaptada a
+      la zona, el tamaño y el estilo que buscás.
+    </p>
+    <a routerLink="/turnos" class="btn btn-primary">Solicitar turno</a>
   </section>
 
   @if (selectedWork) {
@@ -95,7 +79,7 @@
           <img [src]="selectedWork.image" [alt]="selectedWork.title" decoding="async" />
         </div>
         <div class="gallery-modal__content">
-          <p class="section-kicker">Detalle</p>
+          <p class="kicker">{{ formatCategories(selectedWork.category) }}</p>
           <h2 id="gallery-modal-title">{{ selectedWork.title }}</h2>
           <p class="gallery-modal__subtitle">{{ selectedWork.subtitle }}</p>
           <p class="gallery-modal__description">{{ selectedWork.description }}</p>
@@ -104,6 +88,9 @@
               <span>{{ tag }}</span>
             }
           </div>
+          <a routerLink="/turnos" class="btn btn-primary" (click)="closeModal()">
+            Quiero algo así
+          </a>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { STUDIO, whatsappLink } from '../../shared/studio';
 
 interface FooterLink {
   label: string;
@@ -15,37 +16,20 @@ interface FooterLink {
   styleUrls: ['./footer.component.css']
 })
 export class FooterComponent {
-  year = new Date().getFullYear();
+  readonly year = new Date().getFullYear();
+  readonly studio = STUDIO;
 
-  navLinks: FooterLink[] = [
+  readonly navLinks: FooterLink[] = [
     { label: 'Inicio', path: '/' },
     { label: 'Trabajos', path: '/gallery' },
     { label: 'Sobre mí', path: '/about' },
     { label: 'Cuidados y FAQ', path: '/cuidados' },
-    { label: 'Turnos', path: '/turnos' }
+    { label: 'Solicitar turno', path: '/turnos' }
   ];
 
-  socialLinks: FooterLink[] = [
-    { label: 'Instagram', href: 'https://instagram.com/mnk.tat' },
-    { label: 'WhatsApp', href: 'https://wa.me/542494209376' },
-    { label: 'Mail', href: 'mailto:tademonaco8@gmail.com' }
-  ];
-
-  contactCards = [
-    {
-      title: 'Ubicación',
-      value: 'Tandil, Buenos Aires',
-      caption: 'Atención con reserva previa'
-    },
-    {
-      title: 'Agenda',
-      value: 'Reserva previa',
-      caption: 'Horarios habilitados por semana'
-    },
-    {
-      title: 'Estilo',
-      value: 'Black & Grey / Dark Art',
-      caption: 'Diseño custom'
-    }
+  readonly contactLinks: FooterLink[] = [
+    { label: 'WhatsApp', href: whatsappLink('Hola! Quiero consultar por un tatuaje.') },
+    { label: 'Instagram', href: STUDIO.instagram },
+    { label: STUDIO.email, href: `mailto:${STUDIO.email}` }
   ];
 }
