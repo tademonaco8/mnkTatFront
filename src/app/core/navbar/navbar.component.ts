@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter } from 'rxjs/operators';
+import { hasFlash } from '../../shared/flash';
 
 @Component({
   selector: 'app-navbar',
@@ -21,6 +22,7 @@ export class NavbarComponent {
   navItems = [
     { label: 'Inicio', path: '/' },
     { label: 'Trabajos', path: '/gallery' },
+    ...(hasFlash() ? [{ label: 'Flash', path: '/flash' }] : []),
     { label: 'Sobre mí', path: '/about' },
     { label: 'Cuidados', path: '/cuidados' },
     { label: 'Turnos', path: '/turnos' }

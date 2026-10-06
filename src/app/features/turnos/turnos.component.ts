@@ -1,6 +1,6 @@
 import { Component, DestroyRef, OnInit, inject, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   TurnosService,
   CreateBookingRequest,
@@ -11,6 +11,7 @@ import { ResizedImage, resizeImage } from '../../shared/utils/image-resize';
 import { formatDisplayDateTime, formatDuration, tomorrowIso } from '../../shared/utils/dates';
 import { apiErrorMessage } from '../../shared/utils/api-error';
 import { AnalyticsService } from '../../shared/services/analytics.service';
+import { FlashDesign, findFlash } from '../../shared/flash';
 
 interface SubmittedRequest {
   clientName: string;
@@ -35,6 +36,8 @@ const STUDIO_TIME_ZONE = 'America/Argentina/Buenos_Aires';
 export class TurnosComponent implements OnInit {
   private readonly turnosService = inject(TurnosService);
   private readonly analytics = inject(AnalyticsService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly slotPicker = viewChild(SlotPickerComponent);
   private toastTimer?: ReturnType<typeof setTimeout>;
 
@@ -43,6 +46,9 @@ export class TurnosComponent implements OnInit {
   selectedDate = '';
   selectedSlot: AvailableSlot | null = null;
   minDate = '';
+
+  /** Diseño flash elegido desde /flash ("Lo quiero"), si lo hay. */
+  selectedFlash: FlashDesign | null = null;
 
   references: ResizedImage[] = [];
   isProcessingImages = false;
@@ -95,6 +101,18 @@ export class TurnosComponent implements OnInit {
   ngOnInit(): void {
     this.minDate = tomorrowIso();
     this.selectedDate = this.minDate;
+
+    const flash = findFlash(this.route.snapshot.queryParamMap.get('flash'));
+    if (flash?.status === 'disponible') {
+      this.selectedFlash = flash;
+      this.turno.duracionMinutos = flash.durationMinutes;
+    }
+  }
+
+  removeFlash(): void {
+    this.selectedFlash = null;
+    // Sacamos ?flash= de la URL para que no vuelva a aparecer al recargar.
+    this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
   }
 
   onSlotChange(slot: AvailableSlot | null): void {
@@ -150,7 +168,7 @@ export class TurnosComponent implements OnInit {
       phone: this.turno.telefono?.trim() || null,
       startLocal: this.selectedSlot.start,
       durationMinutes: this.turno.duracionMinutos,
-      notes: this.turno.descripcion?.trim() || null,
+      notes: this.buildNotes(),
       bodyZone: this.turno.zona || null,
       size: this.turno.tamano || null,
       references: this.references.map(({ fileName, contentType, dataBase64 }) => ({
@@ -180,12 +198,14 @@ export class TurnosComponent implements OnInit {
           duracion: payload.durationMinutes,
           zona: payload.bodyZone || 'sin dato',
           tamano: payload.size || 'sin dato',
-          fotos: payload.references?.length ?? 0
+          fotos: payload.references?.length ?? 0,
+          flash: this.selectedFlash?.id ?? 'no'
         });
 
         this.turno = this.emptyForm();
         this.references = [];
         this.selectedSlot = null;
+        this.selectedFlash = null;
         this.slotPicker()?.reload();
         this.mostrarToast('Solicitud enviada. Te llega un mail con los detalles.');
       },
@@ -236,6 +256,15 @@ export class TurnosComponent implements OnInit {
     });
 
     return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  }
+
+  /** La idea del cliente; si eligió un flash, va primero para que se vea en el mail y el calendario. */
+  private buildNotes(): string | null {
+    const idea = this.turno.descripcion?.trim();
+    const flash = this.selectedFlash
+      ? `FLASH: ${this.selectedFlash.title} (${this.selectedFlash.id}, ${this.selectedFlash.size})`
+      : '';
+    return [flash, idea].filter(Boolean).join('\n') || null;
   }
 
   private addMinutes(localIso: string, minutes: number): string {

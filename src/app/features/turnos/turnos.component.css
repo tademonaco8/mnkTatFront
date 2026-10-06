@@ -186,6 +186,72 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: not-allowed;
 }
 
+.flash-choice {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto 24px;
+  padding: 14px 18px;
+  border: 1px solid rgba(209, 74, 74, 0.45);
+  border-radius: 14px;
+  background: rgba(182, 49, 49, 0.08);
+}
+
+.flash-choice__paper {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 80px;
+  padding: 6px;
+  border-radius: 6px;
+  background: #f1ede6;
+}
+
+.flash-choice__paper img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.flash-choice__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  color: #cfcfd6;
+  font-size: 0.92rem;
+}
+
+.flash-choice__text strong {
+  color: #fff;
+  font-size: 1.05rem;
+}
+
+.flash-choice__label {
+  color: var(--accent-soft);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.flash-choice__remove {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: transparent;
+  color: #f0f0f0;
+  cursor: pointer;
+}
+
+.flash-choice__remove:hover {
+  border-color: #d86a6a;
+}
+
 .field-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

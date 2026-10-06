@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { STUDIO, whatsappLink } from '../../shared/studio';
+import { hasFlash } from '../../shared/flash';
 
 interface FooterLink {
   label: string;
@@ -22,6 +23,7 @@ export class FooterComponent {
   readonly navLinks: FooterLink[] = [
     { label: 'Inicio', path: '/' },
     { label: 'Trabajos', path: '/gallery' },
+    ...(hasFlash() ? [{ label: 'Flash', path: '/flash' }] : []),
     { label: 'Sobre mí', path: '/about' },
     { label: 'Cuidados y FAQ', path: '/cuidados' },
     { label: 'Solicitar turno', path: '/turnos' }

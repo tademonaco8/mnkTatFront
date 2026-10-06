@@ -32,3 +32,9 @@
 ## Analytics
 - Umami Cloud (no cookies). Website ID goes in `environment.production.ts` → `umamiWebsiteId`; only counts on mnkink.netlify.app.
 - Track key actions with `AnalyticsService.track(...)`: `solicitud-enviada`, `galeria-detalle`, `turno-cancelado`, `turno-reprogramado`; WhatsApp/Instagram clicks are tracked automatically.
+
+## Flash
+- Designs live in `src/app/shared/flash.ts` (`FLASH_DESIGNS`), images in `src/assets/img/flash/`.
+- With an empty list the section is fully hidden: no nav/footer link, no home block, and `/flash` (guarded with `canMatch`) falls back to home.
+- "Lo quiero" links to `/turnos?flash=<id>`: the booking page shows the chosen design, preselects its duration and prepends "FLASH: ..." to the notes. Mark tattooed designs as `status: 'tomado'`.
+- When the first designs go live, add `/flash` to `src/public/sitemap.xml`.

@@ -8,6 +8,23 @@
     </p>
   </div>
 
+  @if (selectedFlash) {
+    <div class="flash-choice">
+      <span class="flash-choice__paper">
+        <img [src]="selectedFlash.image" [alt]="selectedFlash.title" />
+      </span>
+      <div class="flash-choice__text">
+        <span class="flash-choice__label">Diseño flash elegido</span>
+        <strong>{{ selectedFlash.title }}</strong>
+        <span>
+          {{ selectedFlash.size }} · {{ formatDuration(selectedFlash.durationMinutes) }} ·
+          {{ selectedFlash.price ?? 'Consultar' }}
+        </span>
+      </div>
+      <button type="button" class="flash-choice__remove" (click)="removeFlash()">Quitar</button>
+    </div>
+  }
+
   <div class="booking-layout">
     <article class="booking-card">
       <div class="card-header">

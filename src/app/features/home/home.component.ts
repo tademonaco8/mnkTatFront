@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { RevealOnScrollDirective } from '../../shared/directives/reveal-on-scroll.directive';
 import { whatsappLink } from '../../shared/studio';
 import { imageSize } from '../../shared/image-sizes';
+import { availableFlash } from '../../shared/flash';
 
 interface StyleItem {
   name: string;
@@ -29,6 +30,8 @@ interface PreviewWork {
 })
 export class HomeComponent {
   readonly imageSize = imageSize;
+  /** Hasta 3 diseños flash disponibles; si no hay, la sección no se muestra. */
+  readonly flash = availableFlash().slice(0, 3);
   readonly whatsapp = whatsappLink('Hola! Quiero consultar por un tatuaje.');
 
   readonly styles: StyleItem[] = [

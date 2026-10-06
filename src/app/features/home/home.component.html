@@ -62,6 +62,39 @@
     </div>
   </section>
 
+  <!-- Flash (solo si hay diseños disponibles) -->
+  @if (flash.length > 0) {
+    <section class="flash container">
+      <div class="section-head">
+        <h2>Flash disponible</h2>
+        <a routerLink="/flash" class="link-arrow">Ver todos los diseños →</a>
+      </div>
+      <div class="flash__grid">
+        @for (design of flash; track design.id) {
+          <a
+            class="flash__item"
+            routerLink="/turnos"
+            [queryParams]="{ flash: design.id }"
+            appRevealOnScroll
+          >
+            <span class="flash__paper">
+              <img
+                [src]="design.image"
+                [alt]="design.title"
+                [attr.width]="design.width"
+                [attr.height]="design.height"
+                loading="lazy"
+                decoding="async"
+              />
+            </span>
+            <span class="flash__title">{{ design.title }}</span>
+            <span class="flash__meta">{{ design.size }} · {{ design.price ?? 'Consultar' }}</span>
+          </a>
+        }
+      </div>
+    </section>
+  }
+
   <!-- Proceso -->
   <section class="process container">
     <div class="section-head">
